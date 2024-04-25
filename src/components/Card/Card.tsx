@@ -12,6 +12,12 @@ type ImageParams = {
     icon?: string,
 }
 
+const ImgParams: ImageParams[] = [
+    {icon: 'twitter', lien:'hellofr' },
+    {icon: 'instagram', lien:'hellofr' },
+    {icon: 'onlyfans', lien:'hellofr' }
+]
+
 type LienParams = {
     text: string,
     position: string,
@@ -24,12 +30,6 @@ const LienParams: LienParams[] = [
     {text: 'Btn2',position: 'none', link: 'vercel.svg', label: 'HELLO' },
     {text: 'Btn3',position: 'none', link: 'vercel.svg', label: 'HELLO' },
     {text: 'Btn4',position: 'none', link: 'vercel.svg', label: 'HELLO' },
-]
-
-const ImgParams: ImageParams[] = [
-    {icon: 'twitter', lien:'hellofr' },
-    {icon: 'instagram', lien:'hellofr' },
-    {icon: 'facebook', lien:'hellofr' }
 ]
 
 
@@ -53,7 +53,9 @@ export default function Card() {
             </div>
             <div className="flex gap-2">
                 {ImgParams.map((params,index) => (
-                    <Reseaux key={index} src={params.image} alt={params.alt} width={params.width} height={params.height} lien={params.lien} icon={params.icon} />
+                    <div className="hover:scale-105 transition-all min-w-6 min-h-6">
+                        <Reseaux key={index} src={params.image} alt={params.alt} width={params.width} height={params.height} lien={params.lien} icone={params.icon} />
+                    </div>
                 ))}
             </div>
         </div>
