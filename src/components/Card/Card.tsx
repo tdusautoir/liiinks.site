@@ -51,9 +51,9 @@ export default function Card() {
                     </div>
                 ))}
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-4">
                 {ImgParams.map((params,index) => (
-                    <div className="hover:scale-105 transition-all min-w-6 min-h-6">
+                    <div className="hover:scale-125 transition-all min-w-6 min-h-6">
                         <Reseaux key={index} src={params.image} alt={params.alt} width={params.width} height={params.height} lien={params.lien} icone={params.icon} />
                     </div>
                 ))}

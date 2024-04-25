@@ -6,6 +6,9 @@ export default function Home() {
   return (
     <>
         <Card />
+
+        <a href="/custom" className="personnalisation">
+        </a>
     </>
   );
 }
