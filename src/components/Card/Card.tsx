@@ -38,7 +38,7 @@ export default function Card() {
     return (
         <div className="flex flex-col gap-6">
             <div className="flex flex-col items-center justify-center gap-3">
-                <Image src={'/chabal.jpg'} width={120} height={120} alt="Image de chabal" className="rounded-full border-solid border-2 border-slate-900" />
+                <Image src={'/chabal.jpg'} width={120} height={120} alt="Image de chabal" className="rounded-full border-solid border-2 border-neutral-0" />
                 <div className="flex flex-col gap-1 items-center justify-center">
                     <h1 className="font-semibold text-xl text-slate-100">Sebastien chabal</h1>
                     <p className="max-w-60 text-center text-slate-100">Le rugbyman de con là</p>
