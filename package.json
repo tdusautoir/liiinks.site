@@ -11,6 +11,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
     "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-navigation-menu": "^1.1.4",
     "@radix-ui/react-slot": "^1.0.2",
     "airtable": "^0.12.2",
     "class-variance-authority": "^0.7.0",
@@ -20,11 +21,9 @@
     "next-auth": "^4.24.7",
     "react": "^18",
     "react-dom": "^18",
-<<<<<<< HEAD
-    "react-icons": "^5.1.0",
-=======
     "react-hook-form": "^7.51.3",
->>>>>>> 1dee28f840dfdc5a20f8873fc89bdc203fb12fc6
+    "react-icons": "^5.1.0",
+    "sass": "^1.75.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.4"

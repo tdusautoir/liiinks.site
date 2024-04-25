@@ -1,22 +1,24 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "@/styles/globals.css";
+import { cn } from "@/lib/utils";
+import Header from "@/components/header/header";
 
-const inter = Inter({ subsets: ["latin"] });
+const fontSans = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 
 export const metadata: Metadata = {
-  title: "Liiiinks",
-  description: "Create and share links with ease.",
+  title: "liiinks",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} bg-gradient-to-t from-cyan-500 to-blue-500`}>{children}</body>
+    <html lang="en" suppressHydrationWarning suppressContentEditableWarning>
+      <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
+        {children}
+      </body>
     </html>
   );
 }

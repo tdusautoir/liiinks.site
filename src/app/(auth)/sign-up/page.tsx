@@ -7,13 +7,15 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import Link from "next/link"
+import { ArrowLeft } from "lucide-react"
+import style from "../auth.module.scss"
 
 const formSchema = z.object({
     firstname: z.string({
@@ -33,7 +35,7 @@ const formSchema = z.object({
     })
 })
 
-export function SignupForm() {
+function SignUpForm() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -63,23 +65,7 @@ export function SignupForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <FormField
-                    control={form.control}
-                    name="firstname"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Prénom</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Thibaut" {...field} />
-                            </FormControl>
-                            <FormDescription>
-                                Votre prénom sera affiché publiquement.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+            <form onSubmit={form.handleSubmit(onSubmit)}>
                 <FormField
                     control={form.control}
                     name="lastname"
@@ -87,11 +73,21 @@ export function SignupForm() {
                         <FormItem>
                             <FormLabel>Nom</FormLabel>
                             <FormControl>
-                                <Input placeholder="Dusautoir" {...field} />
+                                <Input {...field} />
                             </FormControl>
-                            <FormDescription>
-                                Votre nom sera affiché publiquement.
-                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="firstname"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Prénom</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -101,16 +97,29 @@ export function SignupForm() {
                     name="email"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>E-mail</FormLabel>
                             <FormControl>
-                                <Input placeholder="thibautdusautoir@gmail.com" {...field} />
+                                <Input {...field} type="email" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <Button type="submit">S&apos;enregister</Button>
+                <div className={style.buttons}>
+                    <Button type="button" variant="secondary" asChild>
+                        <Link href="/sign-in"><ArrowLeft className="mr-2 h-4 w-4" />Se connecter</Link>
+                    </Button>
+                    <Button type="submit">Créer le compte</Button>
+                </div>
             </form>
         </Form>
+    )
+}
+
+export default function SignInPage() {
+    return (
+        <main className={style.container}>
+            <SignUpForm />
+        </main>
     )
 }
