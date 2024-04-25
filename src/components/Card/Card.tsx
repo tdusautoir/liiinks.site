@@ -4,11 +4,12 @@ import Image from "next/image";
 
 
 type ImageParams = {
-    image: string,
-    alt: string,
+    image?: string,
+    alt?: string,
     lien: string,
-    width: number,
-    height: number,
+    width?: number,
+    height?: number,
+    icon?: string,
 }
 
 type LienParams = {
@@ -26,9 +27,9 @@ const LienParams: LienParams[] = [
 ]
 
 const ImgParams: ImageParams[] = [
-    {image: '/next.svg', alt: 'Icon Next', width:40, height:40, lien:'hellofr' },
-    {image: '/next.svg', alt: 'Icon Next', width:40, height:40, lien:'hellofr' },
-    {image: '/next.svg', alt: 'Icon Next', width:40, height:40, lien:'hellofr' }
+    {icon: 'twitter', lien:'hellofr' },
+    {icon: 'instagram', lien:'hellofr' },
+    {icon: 'facebook', lien:'hellofr' }
 ]
 
 
@@ -52,7 +53,7 @@ export default function Card() {
             </div>
             <div className="flex gap-2">
                 {ImgParams.map((params,index) => (
-                    <Reseaux key={index} src={params.image} alt={params.alt} width={params.width} height={params.height} lien={params.lien} />
+                    <Reseaux key={index} src={params.image} alt={params.alt} width={params.width} height={params.height} lien={params.lien} icon={params.icon} />
                 ))}
             </div>
         </div>
