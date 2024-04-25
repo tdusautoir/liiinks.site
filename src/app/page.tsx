@@ -1,7 +1,11 @@
+import Card from "@/components/Card/Card";
+
+// Positon possible -> left / right / none
+
 export default function Home() {
   return (
     <>
-      <h1>Liiiinks Site</h1>
+        <Card />
     </>
   );
 }
