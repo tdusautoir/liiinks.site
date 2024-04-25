@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -17,6 +16,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
 import { useState } from "react"
+import Link from "next/link"
+import { ArrowLeft } from "lucide-react"
+import style from "../auth.module.scss"
 
 const formSchema = z.object({
     firstname: z.string({
@@ -36,10 +38,9 @@ const formSchema = z.object({
     })
 })
 
-export function SignupForm() {
+function SignUpForm() {
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
-
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -100,60 +101,61 @@ export function SignupForm() {
     }
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <FormField
-                    control={form.control}
-                    name="firstname"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Prénom</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Thibaut" {...field} />
-                            </FormControl>
-                            <FormDescription>
-                                Votre prénom sera affiché publiquement.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="lastname"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Nom</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Dusautoir" {...field} />
-                            </FormControl>
-                            <FormDescription>
-                                Votre nom sera affiché publiquement.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input placeholder="thibautdusautoir@gmail.com" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <Button disabled={loading} type="submit">
-                    {loading ? <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Chargement...
-                    </> : "Créer un compte"}
-                </Button>
-            </form>
-        </Form>
+        <main className={style.container}>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <FormField
+                        control={form.control}
+                        name="lastname"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Nom</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="firstname"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Prénom</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>E-mail</FormLabel>
+                                <FormControl>
+                                    <Input {...field} type="email" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <div className={style.buttons}>
+                        <Button type="button" variant="secondary" asChild>
+                            <Link href="/sign-in"><ArrowLeft className="mr-2 h-4 w-4" />Se connecter</Link>
+                        </Button>
+                        <Button disabled={loading} type="submit">
+                            {loading ? <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Chargement...
+                            </> : "Créer le compte"}
+                        </Button>
+                    </div>
+                </form >
+            </Form >
+        </main>
     )
 }
