@@ -26,10 +26,10 @@ type LienParams = {
 }
 
 const LienParams: LienParams[] = [
-    {text: 'Buuuuuuuuuuutn1',position: 'none', link: 'vercel.svg', label: 'HELLO' },
-    {text: 'Btn2',position: 'none', link: 'vercel.svg', label: 'HELLO' },
-    {text: 'Btn3',position: 'none', link: 'vercel.svg', label: 'HELLO' },
-    {text: 'Btn4',position: 'none', link: 'vercel.svg', label: 'HELLO' },
+    {text: 'Lien vers mon portfolio',position: 'none', link: 'vercel.svg', label: 'HELLO' },
+    {text: 'Le jeu de la biscotte',position: 'none', link: 'vercel.svg', label: 'HELLO' },
+    {text: 'Vidéo ou on mange de la boue',position: 'none', link: 'vercel.svg', label: 'HELLO' },
+    {text: 'Compile des plaquages',position: 'none', link: 'vercel.svg', label: 'HELLO' },
 ]
 
 
