@@ -1,6 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Loader2 } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
@@ -14,6 +15,8 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { useToast } from "@/components/ui/use-toast"
+import { useState } from "react"
 
 const formSchema = z.object({
     firstname: z.string({
@@ -34,6 +37,9 @@ const formSchema = z.object({
 })
 
 export function SignupForm() {
+    const { toast } = useToast();
+    const [loading, setLoading] = useState(false);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -44,20 +50,52 @@ export function SignupForm() {
     })
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        const res = await fetch("/api/auth/signup", {
-            method: "POST",
-            body: JSON.stringify(values),
-            headers: {
-                "Content-Type": "application/json"
+        setLoading(true);
+
+        try {
+            const res = await fetch("/api/auth/signup", {
+                method: "POST",
+                body: JSON.stringify(values),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+
+            setLoading(false);
+
+            const result = await res.json();
+
+            if (res.ok) {
+                toast({
+                    title: "Compte créé",
+                    description: `Un mail de connexion vous a été envoyé sur votre adresse email "${result.email}".`,
+                    style: {
+                        backgroundColor: "#34D399",
+                        color: "#FFFFFF",
+                    },
+                    duration: 4000
+                })
+            } else {
+                toast({
+                    title: result.error ? result.message : "Une erreur est survenue",
+                    style: {
+                        backgroundColor: "#EF4444",
+                        color: "#FFFFFF",
+                    },
+                    duration: 4000
+                })
             }
-        })
+        } catch (error) {
+            setLoading(false);
 
-        const result = res.json();
-
-        if (res.ok) {
-            console.log(result)
-        } else {
-            console.error(result)
+            toast({
+                title: "Une erreur est survenue",
+                style: {
+                    backgroundColor: "#EF4444",
+                    color: "#FFFFFF",
+                },
+                duration: 4000
+            })
         }
     }
 
@@ -109,7 +147,12 @@ export function SignupForm() {
                         </FormItem>
                     )}
                 />
-                <Button type="submit">S&apos;enregister</Button>
+                <Button disabled={loading} type="submit">
+                    {loading ? <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Chargement...
+                    </> : "Créer un compte"}
+                </Button>
             </form>
         </Form>
     )
