@@ -38,7 +38,7 @@ const formSchema = z.object({
     })
 })
 
-function SignUpForm() {
+export default function SignUpForm() {
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({

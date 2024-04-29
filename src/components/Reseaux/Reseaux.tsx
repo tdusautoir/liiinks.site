@@ -3,15 +3,15 @@ import { FaTwitter, FaLinkedin, FaInstagram, FaFacebook, FaReddit } from "react-
 import { SiOnlyfans } from "react-icons/si";
 
 
-export default function Reseaux(src, width, height, alt, lien, icon) {
+export default function Reseaux({src, width, height, alt, lien, icone}) {
     return (
-        <a href={lien}>
-            {icon === 'twitter' || icon === 'Twitter' || icon === 'X' && <FaTwitter/>}
-            {icon === 'linkedin' || icon === 'Linkedin' && <FaLinkedin/>}
-            {icon === 'instagram' || icon === 'Instagram' && <FaInstagram/>}
-            {icon === 'facebook' || icon === 'Facebook' && <FaFacebook/>}
-            {icon === 'reddit' || icon === 'Reddit' && <FaReddit/>}
-            {icon === 'onlyfans' || icon === 'Onlyfans' && <SiOnlyfans/>}
+        <a href={lien} className="w-full h-full">
+            {icone === 'twitter' && <FaTwitter className="w-full h-full fill-white"/>}
+            {icone === 'linkedin' && <FaLinkedin className="w-full h-full fill-white"/>}
+            {icone === 'instagram' && <FaInstagram className="w-full h-full fill-white"/>}
+            {icone === 'facebook' && <FaFacebook className="w-full h-full fill-white"/>}
+            {icone === 'reddit' && <FaReddit className="w-full h-full fill-white"/>}
+            {icone === 'onlyfans' && <SiOnlyfans className="w-full h-full fill-white"/>}
             <Image src={src} width={width} height={height} alt={alt} />
         </a>
     );
