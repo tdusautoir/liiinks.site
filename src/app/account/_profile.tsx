@@ -54,7 +54,7 @@ export default function Profile() {
                     name="email"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="flex items-center gap-1"><Lock className="h-3 w-3" />E-mail</FormLabel>
+                            <FormLabel className="inline-flex"><Lock className="mr-1 h-3 w-3" />E-mail</FormLabel>
                             <FormControl>
                                 <Input {...field} disabled />
                             </FormControl>

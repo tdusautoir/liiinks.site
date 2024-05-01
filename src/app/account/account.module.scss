@@ -15,7 +15,6 @@
     .content {
         display: grid;
         grid-template: "aside main" 1fr / minmax(256px, 1fr) 9fr;
-        height: 100%;
 
         .menu {
             grid-area: aside;
@@ -29,7 +28,8 @@
             }
         }
 
-        form {
+        &>form,
+        &>div {
             h2 {
                 font-size: 1.25rem;
                 font-weight: 600;

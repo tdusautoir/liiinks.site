@@ -44,7 +44,7 @@ function MyProfile() {
                     <AvatarFallback>AD</AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
+            <DropdownMenuContent className="w-56" align="end">
                 <DropdownMenuLabel>Achille DAVID</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
