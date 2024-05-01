@@ -15,8 +15,6 @@ export default async function Account() {
     const user = session.user as UsersType[0];
     const link = await getLinkByUsername(user.username);
 
-    console.log(link);
-
     if (!link) {
         redirect('/sign-in');
     }
