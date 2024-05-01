@@ -2,6 +2,7 @@ import type { AuthOptions, Session } from "next-auth"
 import EmailProvider from "next-auth/providers/email"
 import MyAdapter from "./adapter"
 import { resend } from "./resend"
+import { getUserByEmail } from "./db/userHelper"
 
 export type UserSessionType = Session & {
     email: string
@@ -22,15 +23,24 @@ export const authOptions: AuthOptions = {
                     html: `<p>Click on the link below to sign in:</p><a href="${url}">Sign In</a>`
                 });
             }
+
         }),
     ],
     callbacks: {
-        session({ session, token }) {
+        async session({ session, token }) {
+
+            if (!session.user || !session.user.email) {
+                return session;
+            }
+
+            const user = await getUserByEmail(session.user.email);
+
             return {
                 ...session,
                 user: {
                     ...session.user,
-                    ...token
+                    ...token,
+                    ...user
                 },
             };
         },

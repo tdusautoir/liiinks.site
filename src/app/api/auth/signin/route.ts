@@ -12,8 +12,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
         let errors = {};
 
-        console.log(body);
-
         const { email } = body as FormData;
 
         // check if all fields are filled

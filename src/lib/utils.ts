@@ -19,3 +19,7 @@ export const isValidPassword = (password: string): boolean => {
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   return regex.test(password);
 }
+
+export const getInitials = (username: string, lastname: string): string => {
+  return `${username.charAt(0).toUpperCase()}${lastname.charAt(0).toUpperCase()}`;
+}

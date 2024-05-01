@@ -6,6 +6,7 @@ import { z } from "zod"
 import { Lock } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { UsersType } from "@/lib/db/userHelper"
 
 const formSchema = z.object({
     firstname: z.string().min(1, {
@@ -23,6 +24,11 @@ const formSchema = z.object({
     }).max(50, {
         message: "Le nom doit contenir au plus 50 caractères.",
     }),
+    username: z.string().min(1, {
+        message: "Le nom d'utilisateur est obligatoire.",
+    }).max(50, {
+        message: "Le nom d'utilisateur doit contenir au plus 50 caractères.",
+    }),
     bio: z.string().min(1, {
         message: "La biographie est obligatoire.",
     }).max(255, {
@@ -30,14 +36,14 @@ const formSchema = z.object({
     })
 })
 
-export default function Profile() {
+export default function Profile({ user }: { user: UsersType[0] }) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            firstname: "Achille",
-            lastname: "David",
-            email: "davidachille18@gmail.com",
-            bio: "Développeur web et mobile, passionné par la technologie et le design.",
+            firstname: user.firstname,
+            lastname: user.lastname,
+            username: user.username,
+            email: user.email,
         },
     });
 
@@ -55,6 +61,19 @@ export default function Profile() {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel className="inline-flex"><Lock className="mr-1 h-3 w-3" />E-mail</FormLabel>
+                            <FormControl>
+                                <Input {...field} disabled />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="inline-flex"><Lock className="mr-1 h-3 w-3" />Username</FormLabel>
                             <FormControl>
                                 <Input {...field} disabled />
                             </FormControl>

@@ -19,6 +19,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { LinksType } from "@/lib/db/links"
 
 const socialsFormSchema = z.object({
     twitter: z.string().optional(),
@@ -33,20 +34,24 @@ const customLinkSchema = z.object({
     label: z.string(),
 })
 
-export default function LinksPage() {
+export default function LinksPage({ link }: { link: LinksType[0] }) {
     return (
         <div className="flex">
-            <Socials />
+            <Socials link={link} />
             <CustomLinks />
         </div>
     )
 }
 
-function Socials() {
+function Socials({ link }: { link: LinksType[0] }) {
     const form = useForm<z.infer<typeof socialsFormSchema>>({
         resolver: zodResolver(socialsFormSchema),
         defaultValues: {
-            twitter: "https://twitter.com/achille_david",
+            facebook: link.facebook ? link.facebook : "",
+            twitter: link.twitter ? link.twitter : "",
+            linkedin: link.linkedin ? link.linkedin : "",
+            behance: link.behance ? link.behance : "",
+            instagram: link.instagram ? link.instagram : "",
         },
     });
 

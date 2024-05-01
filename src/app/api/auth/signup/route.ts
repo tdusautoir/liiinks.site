@@ -1,6 +1,7 @@
 import { isValidEmail, isEmpty } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server"
 import { createUser } from "@/lib/db/userHelper";
+import { createLink } from "@/lib/db/links";
 
 interface FormData {
     username: string;
@@ -46,6 +47,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 { error: true, message: "Une erreur s'est produite lors de la création de votre compte." }
             ), { status: 400 });
         }
+
+        await createLink(username);
 
         return new NextResponse(JSON.stringify(user), { status: 201 });
     } catch (error) {

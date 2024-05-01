@@ -2,37 +2,61 @@ import Link from "next/link";
 import style from "./profile.module.scss";
 import { Avatar, AvatarFallback, AvatarImage, } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { getUserWithLinkByUsername } from "@/lib/db/userHelper";
+import { getInitials } from "@/lib/utils";
+import { notFound } from "next/navigation";
 
-export default function Profile({ params: { username } }: { params: { username: string } }) {
-    const fallback = username[0].toUpperCase() + username[1].toUpperCase();
-    const links = [
-        {
-            href: `/username/page`,
-            label: "Twitter"
+export default async function Profile({ params: { username } }: { params: { username: string } }) {
+    const user = await getUserWithLinkByUsername(username);
+
+    if (!user) notFound();
+
+    const socialLinks: Record<string, {
+        url: string | undefined,
+        label: string
+    }> = {
+        'facebook': {
+            'url': user.link.facebook,
+            'label': 'Facebook'
         },
-        {
-            href: `/username/page`,
-            label: "Instagram"
+        'twitter': {
+            'url': user.link.twitter,
+            'label': 'Twitter'
         },
-        {
-            href: `/username/page`,
-            label: "Facebook"
+        'instagram': {
+            'url': user.link.instagram,
+            'label': 'Instagram'
         },
-    ] as { href: string, label: string }[];
+        'linkedin': {
+            'url': user.link.linkedin,
+            'label': 'LinkedIn'
+        },
+        'behance': {
+            'url': user.link.behance,
+            'label': 'Behance'
+        },
+    }
+
     return (
         <div className={style.container}>
             <Avatar>
-                <AvatarFallback>{fallback}</AvatarFallback>
+                <AvatarFallback>{getInitials(user.firstname, user.username)}</AvatarFallback>
             </Avatar>
             <h1>{username}</h1>
             <ul className="flex flex-col gap-2 w-full items-center">
-                {links.map(({ href, label }) => (
-                    <li key={href} className="w-full">
-                        <Button asChild className="w-full">
-                            <Link href={href}>{label}</Link>
-                        </Button>
-                    </li>
-                ))}
+                {Object.keys(socialLinks).map((key) => {
+                    const url = socialLinks[key].url;
+
+                    if (url === undefined) return null;
+
+                    return (
+                        <li key={key} className="w-full">
+                            <Button asChild className="w-full">
+                                <Link href={url}>{key}</Link>
+                            </Button>
+                        </li>
+                    )
+                })}
                 <li>
                     <Button className="w-fit" variant="link" asChild>
                         <Link href="/">@liiinks</Link>

@@ -7,21 +7,23 @@ import style from "./header.module.scss"
 import Logo from "@/components/logo";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { useState } from "react";
+import { signOut, useSession } from "next-auth/react";
+import { UsersType } from "@/lib/db/userHelper";
+import { getInitials } from "@/lib/utils";
 
 export default function Header() {
-    const [isConnected, setIsConnected] = useState(false);
+    const { status, data } = useSession();
+
     return (
         <header className={style.container}>
             <Logo />
             <NavigationMenu>
                 <NavigationMenuList>
-                    {isConnected ? (
+                    {status === "unauthenticated" ? (
                         <NavigationMenuItem>
                             <Link href="/sign-in" legacyBehavior passHref>
                                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                    <User className="mr-2 w-4 h-4" />Sign In
+                                    <User className="mr-2 w-4 h-4" />Se connecter
                                 </NavigationMenuLink>
                             </Link>
                         </NavigationMenuItem>
@@ -37,18 +39,24 @@ export default function Header() {
 }
 
 function MyProfile() {
+    const { data } = useSession();
+
+    const user = data && (data.user as UsersType[0]);
+
+    if (!user) return null;
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer mr-2">
-                    <AvatarFallback>AD</AvatarFallback>
+                    <AvatarFallback>{getInitials(user.username, user.lastname)}</AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">
-                <DropdownMenuLabel>Achille DAVID</DropdownMenuLabel>
+                <DropdownMenuLabel>{user.firstname + " " + user.lastname}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <Link href="/achille" target="_blank">
+                    <Link href={"/" + user.username} target="_blank">
                         <DropdownMenuItem className="cursor-pointer">
                             <ExternalLink className="mr-2 h-4 w-4" />
                             <span>Ma page liiinks</span>
@@ -63,7 +71,7 @@ function MyProfile() {
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem className="cursor-pointer">
+                    <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
                         <LogOut className="mr-2 h-4 w-4" />
                         <span>Déconnexion</span>
                     </DropdownMenuItem>
