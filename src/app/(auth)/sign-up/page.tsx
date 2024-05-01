@@ -16,11 +16,17 @@ import {
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
 import { useState } from "react"
-import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
+import Link from "next/link"
 import style from "../auth.module.scss"
+import { signIn } from "next-auth/react"
 
 const formSchema = z.object({
+    username: z.string({
+        message: "Votre prénom est requis.",
+    }).min(2, {
+        message: "Votre prénom doit contenir au moins 2 caractères.",
+    }),
     firstname: z.string({
         message: "Votre prénom est requis.",
     }).min(2, {
@@ -38,7 +44,7 @@ const formSchema = z.object({
     })
 })
 
-function SignUpForm() {
+export default function SignUpForm() {
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({
@@ -67,6 +73,12 @@ function SignUpForm() {
             const result = await res.json();
 
             if (res.ok) {
+                signIn("email", {
+                    email: values.email,
+                    callbackUrl: "/",
+                    redirect: false
+                });
+
                 toast({
                     title: "Compte créé",
                     description: `Un mail de connexion vous a été envoyé sur votre adresse email "${result.email}".`,
@@ -106,6 +118,19 @@ function SignUpForm() {
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <FormField
                         control={form.control}
+                        name="firstname"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Prénom</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
                         name="lastname"
                         render={({ field }) => (
                             <FormItem>
@@ -119,10 +144,10 @@ function SignUpForm() {
                     />
                     <FormField
                         control={form.control}
-                        name="firstname"
+                        name="username"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Prénom</FormLabel>
+                                <FormLabel>Pseudo</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
                                 </FormControl>
