@@ -12,6 +12,12 @@ type ImageParams = {
     icon?: string,
 }
 
+const ImgParams: ImageParams[] = [
+    {icon: 'twitter', lien:'hellofr' },
+    {icon: 'instagram', lien:'hellofr' },
+    {icon: 'onlyfans', lien:'hellofr' }
+]
+
 type LienParams = {
     text: string,
     position: string,
@@ -20,16 +26,10 @@ type LienParams = {
 }
 
 const LienParams: LienParams[] = [
-    {text: 'Buuuuuuuuuuutn1',position: 'none', link: 'vercel.svg', label: 'HELLO' },
-    {text: 'Btn2',position: 'none', link: 'vercel.svg', label: 'HELLO' },
-    {text: 'Btn3',position: 'none', link: 'vercel.svg', label: 'HELLO' },
-    {text: 'Btn4',position: 'none', link: 'vercel.svg', label: 'HELLO' },
-]
-
-const ImgParams: ImageParams[] = [
-    {icon: 'twitter', lien:'hellofr' },
-    {icon: 'instagram', lien:'hellofr' },
-    {icon: 'facebook', lien:'hellofr' }
+    {text: 'Lien vers mon portfolio',position: 'none', link: 'vercel.svg', label: 'HELLO' },
+    {text: 'Le jeu de la biscotte',position: 'none', link: 'vercel.svg', label: 'HELLO' },
+    {text: 'Vidéo ou on mange de la boue',position: 'none', link: 'vercel.svg', label: 'HELLO' },
+    {text: 'Compile des plaquages',position: 'none', link: 'vercel.svg', label: 'HELLO' },
 ]
 
 
@@ -38,7 +38,7 @@ export default function Card() {
     return (
         <div className="flex flex-col gap-6">
             <div className="flex flex-col items-center justify-center gap-3">
-                <Image src={'/chabal.jpg'} width={120} height={120} alt="Image de chabal" className="rounded-full border-solid border-2 border-slate-900" />
+                <Image src={'/chabal.jpg'} width={120} height={120} alt="Image de chabal" className="rounded-full border-solid border-2 border-neutral-0" />
                 <div className="flex flex-col gap-1 items-center justify-center">
                     <h1 className="font-semibold text-xl text-slate-100">Sebastien chabal</h1>
                     <p className="max-w-60 text-center text-slate-100">Le rugbyman de con là</p>
@@ -51,9 +51,11 @@ export default function Card() {
                     </div>
                 ))}
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-4">
                 {ImgParams.map((params,index) => (
-                    <Reseaux key={index} src={params.image} alt={params.alt} width={params.width} height={params.height} lien={params.lien} icon={params.icon} />
+                    <div className="hover:scale-125 transition-all min-w-6 min-h-6">
+                        <Reseaux key={index} src={params.image} alt={params.alt} width={params.width} height={params.height} lien={params.lien} icone={params.icon} />
+                    </div>
                 ))}
             </div>
         </div>
