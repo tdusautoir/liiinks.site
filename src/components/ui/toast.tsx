@@ -43,7 +43,7 @@ const toastVariants = cva(
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
-    VariantProps<typeof toastVariants>
+  VariantProps<typeof toastVariants>
 >(({ className, variant, ...props }, ref) => {
   return (
     <ToastPrimitives.Root
@@ -126,4 +126,20 @@ export {
   ToastDescription,
   ToastClose,
   ToastAction,
+}
+
+export const toastErrorProperties = {
+  style: {
+    backgroundColor: "#EF4444",
+    color: "#FFFFFF",
+  },
+  duration: 4000
+}
+
+export const toastSuccessProperties = {
+  style: {
+    backgroundColor: "#34D399",
+    color: "#FFFFFF",
+  },
+  duration: 4000
 }

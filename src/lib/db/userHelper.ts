@@ -1,5 +1,5 @@
 import base from "../airtable";
-import { LinksType, getLinkByUsername } from "./links";
+import { LinksType, getLinkByUsername } from "./linksHelper";
 
 export type UsersType = Array<{
     id: string,
@@ -7,6 +7,7 @@ export type UsersType = Array<{
     username: string,
     firstname: string,
     lastname: string,
+    bio: string | undefined,
     createdAt: string,
 }>
 
@@ -36,6 +37,7 @@ export default async function getAllUsers(): Promise<UsersType> {
                     username: record.get("username") as string,
                     firstname: record.get("firstname") as string,
                     lastname: record.get("lastname") as string,
+                    bio: record.get("bio") as string | undefined,
                     createdAt: record.get("createdAt") as string
                 });
             });
@@ -67,6 +69,7 @@ export async function getUserById(id: string): Promise<UsersType[0] | null> {
                 username: record.get("username") as string,
                 firstname: record.get("firstname") as string,
                 lastname: record.get("lastname") as string,
+                bio: record.get("bio") as string | undefined,
                 createdAt: record.get("createdAt") as string
             });
         });
@@ -102,6 +105,7 @@ export async function getUserByEmail(email: string): Promise<UsersType[0] | null
                 username: records[0].get("username") as string,
                 firstname: records[0].get("firstname") as string,
                 lastname: records[0].get("lastname") as string,
+                bio: records[0].get("bio") as string | undefined,
                 createdAt: records[0].get("createdAt") as string
             });
         });
@@ -245,13 +249,14 @@ export const getUserByUsername = async (username: string): Promise<UsersType[0] 
                 username: records[0].get("username") as string,
                 firstname: records[0].get("firstname") as string,
                 lastname: records[0].get("lastname") as string,
+                bio: records[0].get("bio") as string | undefined,
                 createdAt: records[0].get("createdAt") as string
             });
         });
     });
 }
 
-export const getUserWithLinkByUsername = async (username: string): Promise<UsersType[0] & { link: LinksType[0] } | null> => {
+export const getUserWithLinkByUsername = async (username: string): Promise<UsersType[0] & { link: LinksType[0] } & { bio: string | undefined } | null> => {
     return new Promise(async (resolve, reject) => {
         const user = await getUserByUsername(username);
 
@@ -270,6 +275,74 @@ export const getUserWithLinkByUsername = async (username: string): Promise<Users
         resolve({
             ...user,
             link
+        });
+    });
+}
+
+export const updateUser = async ({
+    email,
+    username,
+    firstname,
+    lastname,
+    bio,
+}: {
+    username: string,
+    email: string,
+    firstname: string,
+    lastname: string,
+    bio: string | undefined
+}): Promise<{ email: string, username: string, changeUsername: boolean } | null> => {
+    return new Promise(async (resolve, reject) => {
+        const user = await getUserByEmail(email);
+        let changeUsername = false;
+
+        if (!user) {
+            reject('emailNotExist');
+            return;
+        }
+
+        if (user.username !== username) {
+            const usernameAlreadyExist = await checkIfUsernameExist(username);
+
+            if (usernameAlreadyExist) {
+                reject('usernameAlreadyExist');
+                return;
+            }
+
+            changeUsername = true;
+        }
+
+        const link = await getLinkByUsername(user.username);
+
+        if (!link) {
+            reject('linkNotExist');
+            return;
+        }
+
+        base('users').update(user.id, {
+            "email": email,
+            "username": username,
+            "firstname": firstname,
+            "lastname": lastname,
+            "bio": bio
+        }, function (err, record) {
+            if (err) {
+                console.error(err);
+                reject(err);
+                return;
+            }
+
+            base('links').update(link.id, {
+                "username": username
+            }, function (err, record) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                    return;
+                }
+            });
+
+            resolve({ email, username, changeUsername });
         });
     });
 }

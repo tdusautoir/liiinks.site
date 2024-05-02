@@ -1,6 +1,6 @@
 import Link from "next/link";
 import style from "./profile.module.scss";
-import { Avatar, AvatarFallback, AvatarImage, } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getUserWithLinkByUsername } from "@/lib/db/userHelper";
 import { getInitials } from "@/lib/utils";
@@ -40,19 +40,23 @@ export default async function Profile({ params: { username } }: { params: { user
     return (
         <div className={style.container}>
             <Avatar>
-                <AvatarFallback>{getInitials(user.firstname, user.username)}</AvatarFallback>
+                <AvatarFallback>{getInitials(user.firstname, user.lastname)}</AvatarFallback>
             </Avatar>
-            <h1>{username}</h1>
+            <div>
+                <h1>{user.firstname} {user.lastname}</h1>
+                {user.bio && <p className="text-sm text-muted-foreground">{user.bio}</p>}
+            </div>
             <ul className="flex flex-col gap-2 w-full items-center">
                 {Object.keys(socialLinks).map((key) => {
                     const url = socialLinks[key].url;
+                    const label = socialLinks[key].label;
 
                     if (url === undefined) return null;
 
                     return (
                         <li key={key} className="w-full">
                             <Button asChild className="w-full">
-                                <Link href={url}>{key}</Link>
+                                <Link href={url}>{label}</Link>
                             </Button>
                         </li>
                     )

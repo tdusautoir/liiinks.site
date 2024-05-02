@@ -6,7 +6,7 @@ import { z } from "zod"
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { EllipsisVertical, PenBox, Trash } from "lucide-react"
+import { EllipsisVertical, Loader2, PenBox, Trash } from "lucide-react"
 import { useState } from "react"
 import {
     AlertDialog,
@@ -19,18 +19,33 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { LinksType } from "@/lib/db/links"
+import { LinksType } from "@/lib/db/linksHelper"
+import { DialogTrigger } from "@radix-ui/react-dialog"
+import { toastErrorProperties, toastSuccessProperties } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
 
 const socialsFormSchema = z.object({
-    twitter: z.string().optional(),
-    facebook: z.string().optional(),
-    linkedin: z.string().optional(),
-    behance: z.string().optional(),
-    instagram: z.string().optional(),
+    twitter: z.string().url({
+        message: "Veuillez entrer une URL valide",
+    }).optional(),
+    facebook: z.string().url({
+        message: "Veuillez entrer une URL valide",
+    }).optional(),
+    linkedin: z.string().url({
+        message: "Veuillez entrer une URL valide",
+    }).optional(),
+    behance: z.string().url({
+        message: "Veuillez entrer une URL valide",
+    }).optional(),
+    instagram: z.string().url({
+        message: "Veuillez entrer une URL valide",
+    }).optional(),
 })
 
 const customLinkSchema = z.object({
-    url: z.string().url(),
+    url: z.string().url({
+        message: "Veuillez entrer une URL valide",
+    }),
     label: z.string(),
 })
 
@@ -44,24 +59,62 @@ export default function LinksPage({ link }: { link: LinksType[0] }) {
 }
 
 function Socials({ link }: { link: LinksType[0] }) {
+    const [loading, setLoading] = useState(false);
+    const { toast } = useToast();
     const form = useForm<z.infer<typeof socialsFormSchema>>({
         resolver: zodResolver(socialsFormSchema),
         defaultValues: {
-            facebook: link.facebook ? link.facebook : "",
-            twitter: link.twitter ? link.twitter : "",
-            linkedin: link.linkedin ? link.linkedin : "",
-            behance: link.behance ? link.behance : "",
-            instagram: link.instagram ? link.instagram : "",
+            facebook: link.facebook ? link.facebook : undefined,
+            twitter: link.twitter ? link.twitter : undefined,
+            linkedin: link.linkedin ? link.linkedin : undefined,
+            behance: link.behance ? link.behance : undefined,
+            instagram: link.instagram ? link.instagram : undefined,
         },
     });
 
-    function onSubmit(values: z.infer<typeof socialsFormSchema>) {
-        console.log(values);
+    const onSubmit = async (values: z.infer<typeof socialsFormSchema>) => {
+        setLoading(true);
+
+        try {
+            const res = await fetch("/api/account/links", {
+                method: "PUT",
+                body: JSON.stringify({
+                    ...values,
+                    id: link.id
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+
+            setLoading(false);
+
+            const result = await res.json();
+
+            if (res.ok) {
+                toast({
+                    title: "Votre liiink a été mis à jour avec succès.",
+                    ...toastSuccessProperties
+                })
+            } else {
+                toast({
+                    title: result.error ? result.message : "Une erreur est survenue",
+                    ...toastErrorProperties
+                })
+            }
+        } catch (error) {
+            setLoading(false);
+
+            toast({
+                title: "Une erreur est survenue",
+                ...toastErrorProperties
+            })
+        }
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full max-w-xl p-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full max-w-xl p-4 pt-0">
                 <h2>Réseaux sociaux</h2>
                 <FormField
                     control={form.control}
@@ -128,7 +181,12 @@ function Socials({ link }: { link: LinksType[0] }) {
                         </FormItem>
                     )}
                 />
-                <Button className="w-fit">Enregistrer les modifications</Button>
+                <Button disabled={loading} className="w-fit" type="submit">
+                    {loading ? <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Chargement...
+                    </> : "Emregistrer les modifications"}
+                </Button>
             </form>
         </Form>
     )
@@ -142,12 +200,21 @@ function CustomLinks() {
     ] as z.infer<typeof customLinkSchema>[];
 
     return (
-        <div className="flex flex-col gap-4 w-full max-w-xl p-4">
+        <div className="flex flex-col gap-4 w-full max-w-xl p-4 pt-0">
             <h2>Liens personnalisés</h2>
             <p className="text-sm text-muted-foreground">Vous pouvez ajouter jusqu&apos;à 5 liens vers vos projets, site web, portfolio, etc.</p>
             {urls.map((link, key) => (
                 <CustomLink key={key} link={link} />
             ))}
+            <Dialog>
+                <DialogTrigger asChild><Button variant="outline" className="mr-auto">Ajouter</Button></DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Ajouter un lien personnalisé</DialogTitle>
+                    </DialogHeader>
+                    <AddCustomLinkForm />
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
@@ -218,40 +285,88 @@ function CustomLinkForm({ link }: { link: z.infer<typeof customLinkSchema> }) {
     }
 
     return (
-        <>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-                    <FormField
-                        control={form.control}
-                        name="label"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Libellé</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="url"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>URL</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <DialogFooter>
-                        <Button className="w-fit">Enregistrer</Button>
-                    </DialogFooter>
-                </form>
-            </Form>
-        </>
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                <FormField
+                    control={form.control}
+                    name="label"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Libellé</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="url"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>URL</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <DialogFooter>
+                    <Button className="w-fit">Enregistrer</Button>
+                </DialogFooter>
+            </form>
+        </Form>
+    )
+}
+
+function AddCustomLinkForm() {
+    const form = useForm<z.infer<typeof customLinkSchema>>({
+        resolver: zodResolver(customLinkSchema),
+        defaultValues: {
+            url: "",
+            label: "",
+        },
+    });
+
+    function onSubmit(values: z.infer<typeof customLinkSchema>) {
+        console.log(values);
+    }
+
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                <FormField
+                    control={form.control}
+                    name="label"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Libellé</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="url"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>URL</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <DialogFooter>
+                    <Button className="w-fit">Ajouter</Button>
+                </DialogFooter>
+            </form>
+        </Form>
     )
 }

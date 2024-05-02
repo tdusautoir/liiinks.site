@@ -49,7 +49,7 @@ function MyProfile() {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer mr-2">
-                    <AvatarFallback>{getInitials(user.username, user.lastname)}</AvatarFallback>
+                    <AvatarFallback>{getInitials(user.firstname, user.lastname)}</AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">

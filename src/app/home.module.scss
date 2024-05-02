@@ -1,0 +1,32 @@
+.container {
+    padding: 1rem;
+    padding: calc(56px + 1rem) 0;
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    &>* {
+        width: 100%;
+    }
+
+    &>*:is(button, a) {
+        width: fit-content;
+    }
+
+    h1 {
+        font-size: 56px;
+        font-weight: 700;
+        padding: 1.5rem;
+        line-height: 1.2;
+    }
+
+    p {
+        margin: 0 auto;
+        max-width: 750px;
+        padding: 1.5rem;
+        padding-top: 0;
+    }
+}
