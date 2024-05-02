@@ -11,29 +11,31 @@ import { signOut, useSession } from "next-auth/react";
 import { UsersType } from "@/lib/db/userHelper";
 import { getInitials } from "@/lib/utils";
 
-export default function Header() {
-    const { status, data } = useSession();
+export default function Header({ asMenu = true }: { asMenu?: boolean }) {
+    const { status } = useSession();
 
     return (
         <header className={style.container}>
             <Logo />
-            <NavigationMenu>
-                <NavigationMenuList>
-                    {status === "unauthenticated" ? (
-                        <NavigationMenuItem>
-                            <Link href="/sign-in" legacyBehavior passHref>
-                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                    <User className="mr-2 w-4 h-4" />Se connecter
-                                </NavigationMenuLink>
-                            </Link>
-                        </NavigationMenuItem>
-                    ) : (
-                        <NavigationMenuItem>
-                            <MyProfile />
-                        </NavigationMenuItem>
-                    )}
-                </NavigationMenuList>
-            </NavigationMenu>
+            {asMenu && (
+                <NavigationMenu>
+                    <NavigationMenuList>
+                        {status === "unauthenticated" ? (
+                            <NavigationMenuItem>
+                                <Link href="/sign-in" legacyBehavior passHref>
+                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                        <User className="mr-2 w-4 h-4" />Se connecter
+                                    </NavigationMenuLink>
+                                </Link>
+                            </NavigationMenuItem>
+                        ) : (
+                            <NavigationMenuItem>
+                                <MyProfile />
+                            </NavigationMenuItem>
+                        )}
+                    </NavigationMenuList>
+                </NavigationMenu>
+            )}
         </header >
     )
 }

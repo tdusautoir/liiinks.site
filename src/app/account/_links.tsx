@@ -23,6 +23,7 @@ import { LinksType } from "@/lib/db/linksHelper"
 import { DialogTrigger } from "@radix-ui/react-dialog"
 import { toastErrorProperties, toastSuccessProperties } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
+import style from "./account.module.scss"
 
 const socialsFormSchema = z.object({
     twitter: z.string().url({
@@ -51,7 +52,7 @@ const customLinkSchema = z.object({
 
 export default function LinksPage({ link }: { link: LinksType[0] }) {
     return (
-        <div className="flex">
+        <div className={style.links}>
             <Socials link={link} />
             <CustomLinks />
         </div>
