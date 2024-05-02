@@ -1,4 +1,4 @@
-import { checkIfUsernameExist, getUserByEmail, updateUser } from "@/lib/db/userHelper";
+import { deleteUser, updateUser } from "@/lib/db/userHelper";
 import { isEmpty, isValidEmail } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -65,6 +65,28 @@ export async function PUT(req: NextRequest, res: NextResponse) {
 
         return new NextResponse(JSON.stringify(
             { error: true, message: "Une erreur s'est produite lors de la modification de votre compte." }
+        ), { status: 400 });
+    }
+}
+
+export async function DELETE(req: NextRequest, res: NextResponse) {
+    try {
+        const { userId } = await req.json();
+
+        const deletedUser = await deleteUser(userId);
+
+        if (!deletedUser) {
+            return new NextResponse(JSON.stringify(
+                { error: true, message: "Une erreur s'est produite lors de la modification de votre compte." }
+            ), { status: 400 });
+        }
+
+        return new NextResponse(JSON.stringify({
+            success: true
+        }), { status: 200 });
+    } catch (error) {
+        return new NextResponse(JSON.stringify(
+            { error: true, message: "Une erreur s'est produite lors de la suppression de votre compte." }
         ), { status: 400 });
     }
 }

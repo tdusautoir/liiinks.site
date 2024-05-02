@@ -1,4 +1,3 @@
-import { isEmpty } from './../utils';
 import base from "../airtable";
 
 export type LinksType = Array<{
@@ -182,8 +181,6 @@ export const createPersonalizedLinks = async (linkId: string, label: string, url
                     resolve(null);
                     return;
                 }
-
-                const record = records[0];
 
                 resolve({
                     url,

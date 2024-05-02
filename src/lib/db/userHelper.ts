@@ -360,3 +360,57 @@ export const updateUser = async ({
         });
     });
 }
+
+export const deleteUser = async (id: string): Promise<boolean> => {
+    const user = await getUserById(id);
+
+    if (!user) return false;
+
+    return new Promise((resolve, reject) => {
+        base('users').destroy(user?.id, function (err, deletedRecord) {
+            if (err) {
+                console.error(err);
+                reject(err);
+                return;
+            }
+
+            if (!deletedRecord) {
+                console.error("No record found");
+                resolve(false);
+                return;
+            }
+
+            base('links').select({
+                filterByFormula: `username = "${user?.username}"`
+            }).firstPage(function (err, records) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                    return;
+                }
+
+                if (!records) {
+                    console.error("No records found");
+                    resolve(false);
+                    return;
+                }
+
+                if (!records.length) {
+                    console.error("No record found");
+                    resolve(false);
+                    return;
+                }
+
+                base('links').destroy(records[0].id, function (err, deletedRecord) {
+                    if (err) {
+                        console.error(err);
+                        reject(err);
+                        return;
+                    }
+                });
+            });
+
+            resolve(true);
+        });
+    });
+}

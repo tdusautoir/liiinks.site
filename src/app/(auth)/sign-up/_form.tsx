@@ -85,6 +85,7 @@ export default function SignUpForm() {
 
                 toast({
                     title: "Compte créé",
+                    description: "Un email de connexion vous a été envoyé.",
                     ...toastSuccessProperties
                 })
             } else {

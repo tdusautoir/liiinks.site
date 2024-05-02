@@ -10,7 +10,7 @@ import { UsersType } from "@/lib/db/userHelper"
 import { useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { toastErrorProperties, toastSuccessProperties } from "@/components/ui/toast"
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -99,6 +99,42 @@ export default function Profile({ user }: { user: UsersType[0] }) {
                         ...toastSuccessProperties
                     })
                 }
+            } else {
+                toast({
+                    title: result.error ? result.message : "Une erreur est survenue",
+                    ...toastErrorProperties
+                })
+            }
+        } catch (error) {
+            setLoading(false);
+
+            toast({
+                title: "Une erreur est survenue",
+                ...toastErrorProperties
+            })
+        }
+    }
+
+    const deleteUser = async () => {
+        try {
+            const res = await fetch("/api/account/profile", {
+                method: "DELETE",
+                body: JSON.stringify({
+                    userId: user.id
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+
+            setLoading(false);
+
+            const result = await res.json();
+
+            if (res.ok) {
+                signOut({
+                    callbackUrl: "/"
+                });
             } else {
                 toast({
                     title: result.error ? result.message : "Une erreur est survenue",
@@ -214,7 +250,7 @@ export default function Profile({ user }: { user: UsersType[0] }) {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <AlertDialogCancel>Annuler</AlertDialogCancel>
-                            <AlertDialogAction className={buttonVariants({ variant: "destructive" })}>Supprimer</AlertDialogAction>
+                            <AlertDialogAction className={buttonVariants({ variant: "destructive" })} onClick={() => deleteUser()}>Supprimer</AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>
