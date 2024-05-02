@@ -14,7 +14,8 @@ const fontSans = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "liiinks",
+  title: "@liiinks",
+  description: "Tout sur vous en un seul clic. À travers un seul lien.",
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
