@@ -42,7 +42,10 @@ export default async function Profile({ params: { username } }: { params: { user
             <Avatar>
                 <AvatarFallback>{getInitials(user.firstname, user.lastname)}</AvatarFallback>
             </Avatar>
-            <h1>{username}</h1>
+            <div>
+                <h1>{user.firstname} {user.lastname}</h1>
+                {user.bio && <p className="text-sm text-muted-foreground">{user.bio}</p>}
+            </div>
             <ul className="flex flex-col gap-2 w-full items-center">
                 {Object.keys(socialLinks).map((key) => {
                     const url = socialLinks[key].url;

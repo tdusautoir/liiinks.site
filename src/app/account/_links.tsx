@@ -25,15 +25,27 @@ import { toastErrorProperties, toastSuccessProperties } from "@/components/ui/to
 import { useToast } from "@/components/ui/use-toast"
 
 const socialsFormSchema = z.object({
-    twitter: z.string().optional(),
-    facebook: z.string().optional(),
-    linkedin: z.string().optional(),
-    behance: z.string().optional(),
-    instagram: z.string().optional(),
+    twitter: z.string().url({
+        message: "Veuillez entrer une URL valide",
+    }).optional(),
+    facebook: z.string().url({
+        message: "Veuillez entrer une URL valide",
+    }).optional(),
+    linkedin: z.string().url({
+        message: "Veuillez entrer une URL valide",
+    }).optional(),
+    behance: z.string().url({
+        message: "Veuillez entrer une URL valide",
+    }).optional(),
+    instagram: z.string().url({
+        message: "Veuillez entrer une URL valide",
+    }).optional(),
 })
 
 const customLinkSchema = z.object({
-    url: z.string().url(),
+    url: z.string().url({
+        message: "Veuillez entrer une URL valide",
+    }),
     label: z.string(),
 })
 
@@ -52,11 +64,11 @@ function Socials({ link }: { link: LinksType[0] }) {
     const form = useForm<z.infer<typeof socialsFormSchema>>({
         resolver: zodResolver(socialsFormSchema),
         defaultValues: {
-            facebook: link.facebook ? link.facebook : "",
-            twitter: link.twitter ? link.twitter : "",
-            linkedin: link.linkedin ? link.linkedin : "",
-            behance: link.behance ? link.behance : "",
-            instagram: link.instagram ? link.instagram : "",
+            facebook: link.facebook ? link.facebook : undefined,
+            twitter: link.twitter ? link.twitter : undefined,
+            linkedin: link.linkedin ? link.linkedin : undefined,
+            behance: link.behance ? link.behance : undefined,
+            instagram: link.instagram ? link.instagram : undefined,
         },
     });
 
