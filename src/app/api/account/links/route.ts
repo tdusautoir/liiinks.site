@@ -1,4 +1,4 @@
-import { updateLink } from "@/lib/db/linksHelper";
+import { createPersonalizedLinks, updateLink } from "@/lib/db/linksHelper";
 import { isEmpty } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 

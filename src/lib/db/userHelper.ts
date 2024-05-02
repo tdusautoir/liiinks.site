@@ -256,7 +256,11 @@ export const getUserByUsername = async (username: string): Promise<UsersType[0] 
     });
 }
 
-export const getUserWithLinkByUsername = async (username: string): Promise<UsersType[0] & { link: LinksType[0] } & { bio: string | undefined } | null> => {
+export const getUserWithLinkByUsername = async (username: string): Promise<UsersType[0] & {
+    link: Omit<LinksType[0], 'personalizedLinks'> & {
+        personalizedLinks: Array<{ url: string, label: string }>
+    }
+} & { bio: string | undefined } | null> => {
     return new Promise(async (resolve, reject) => {
         const user = await getUserByUsername(username);
 
@@ -272,9 +276,19 @@ export const getUserWithLinkByUsername = async (username: string): Promise<Users
             return;
         }
 
+        let formatPersonalizedLinks = [];
+        try {
+            formatPersonalizedLinks = link.personalizedLinks !== undefined ? JSON.parse(link.personalizedLinks) : [];
+        } catch (error) {
+            console.log('error', error);
+        }
+
         resolve({
             ...user,
-            link
+            link: {
+                ...link,
+                personalizedLinks: formatPersonalizedLinks
+            }
         });
     });
 }
