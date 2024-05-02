@@ -1,5 +1,5 @@
 import base from "../airtable";
-import { LinksType, getLinkByUsername } from "./links";
+import { LinksType, getLinkByUsername } from "./linksHelper";
 
 export type UsersType = Array<{
     id: string,

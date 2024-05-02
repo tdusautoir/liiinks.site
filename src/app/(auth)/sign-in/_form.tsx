@@ -12,6 +12,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { signIn } from "next-auth/react"
+import { toastErrorProperties, toastSuccessProperties } from "@/components/ui/toast"
 
 const formSchema = z.object({
     email: z.string().min(1, {
@@ -62,22 +63,14 @@ export default function SignInForm() {
 
                 toast({
                     description: `Un mail de connexion vous a été envoyé sur votre adresse email "${values.email}".`,
-                    style: {
-                        backgroundColor: "#34D399",
-                        color: "#FFFFFF",
-                    },
-                    duration: 4000
+                    ...toastSuccessProperties
                 })
             } else {
                 setLoading(false);
 
                 toast({
                     title: result.error ? result.message : "Une erreur est survenue",
-                    style: {
-                        backgroundColor: "#EF4444",
-                        color: "#FFFFFF",
-                    },
-                    duration: 4000
+                    ...toastErrorProperties
                 })
             }
         } catch (error) {
@@ -85,11 +78,7 @@ export default function SignInForm() {
 
             toast({
                 title: "Une erreur est survenue",
-                style: {
-                    backgroundColor: "#EF4444",
-                    color: "#FFFFFF",
-                },
-                duration: 4000
+                ...toastErrorProperties
             })
         }
     }

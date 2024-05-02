@@ -1,7 +1,7 @@
 import { isValidEmail, isEmpty } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server"
 import { createUser } from "@/lib/db/userHelper";
-import { createLink } from "@/lib/db/links";
+import { createLink } from "@/lib/db/linksHelper";
 
 interface FormData {
     username: string;

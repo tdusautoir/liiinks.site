@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { UsersType } from "@/lib/db/userHelper"
 import { useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
+import { toastErrorProperties, toastSuccessProperties } from "@/components/ui/toast"
 
 const formSchema = z.object({
     firstname: z.string().min(1, {
@@ -69,39 +70,29 @@ export default function Profile({ user }: { user: UsersType[0] }) {
             const result = await res.json();
 
             if (res.ok) {
-                toast({
-                    title: "Votre profil a été mis à jour avec succès.",
-                    style: {
-                        backgroundColor: "#34D399",
-                        color: "#FFFFFF",
-                    },
-                    duration: 4000
-                })
-
                 if (result.user.changeUsername) {
-                    window.location.reload();
+                    toast({
+                        title: "Votre profil a été mis à jour avec succès. Votre liiink va être mis à jour dans quelques instants.",
+                        ...toastSuccessProperties
+                    })
+                } else {
+                    toast({
+                        title: "Votre profil a été mis à jour avec succès.",
+                        ...toastSuccessProperties
+                    })
                 }
             } else {
                 toast({
                     title: result.error ? result.message : "Une erreur est survenue",
-                    style: {
-                        backgroundColor: "#EF4444",
-                        color: "#FFFFFF",
-                    },
-                    duration: 4000
+                    ...toastErrorProperties
                 })
             }
         } catch (error) {
-            console.error('DWADAW', error);
             setLoading(false);
 
             toast({
                 title: "Une erreur est survenue",
-                style: {
-                    backgroundColor: "#EF4444",
-                    color: "#FFFFFF",
-                },
-                duration: 4000
+                ...toastErrorProperties
             })
         }
     }
