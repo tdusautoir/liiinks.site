@@ -22,7 +22,13 @@ type ButtonLabels = {
 type StepsType<T extends Steps> = keyof T;
 
 
-export default function Dashboard({ user }: { user: UsersType[0] & { link: LinksType[0] } }) {
+export default function Dashboard({ user }: {
+    user: UsersType[0] & {
+        link: Omit<LinksType[0], 'personalizedLinks'> & {
+            personalizedLinks: Array<{ url: string, label: string }>
+        }
+    }
+}) {
     const [step, setStep] = useState<StepsType<typeof steps>>("profile");
 
     const handleStepChange = (newStep: StepsType<typeof steps>) => {

@@ -238,6 +238,8 @@ function CustomLinks({
     updatePersonalizedLink: (link: CustomLinkType[0], linkIndex: number) => void,
     removePersonalizedLink: (linkIndex: number) => void
 }) {
+    const [open, setOpen] = useState(false);
+
     return (
         <div className="flex flex-col gap-4 w-full max-w-xl p-4 pt-0">
             <h2>Liens personnalisés</h2>
@@ -245,13 +247,13 @@ function CustomLinks({
             {customLinks.map((link, key) => (
                 <CustomLink key={key} link={link} linkId={linkId} personalizedLinkKey={key} updatePersonalizedLink={updatePersonalizedLink} removePersonalizedLink={removePersonalizedLink} />
             ))}
-            <Dialog>
-                <DialogTrigger asChild><Button variant="outline" className="mr-auto">Ajouter</Button></DialogTrigger>
+            <Button variant="outline" className="mr-auto" onClick={() => setOpen(true)}>Ajouter</Button>
+            <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Ajouter un lien personnalisé</DialogTitle>
                     </DialogHeader>
-                    <AddCustomLinkForm linkId={linkId} addPersonalizedLink={addPersonalizedLink} />
+                    <AddCustomLinkForm closeModal={() => setOpen(false)} linkId={linkId} addPersonalizedLink={addPersonalizedLink} />
                 </DialogContent>
             </Dialog>
         </div>
@@ -336,7 +338,7 @@ function CustomLink({
                             <DialogHeader>
                                 <DialogTitle>Modifier le lien</DialogTitle>
                             </DialogHeader>
-                            <CustomLinkForm personalizedLinkKey={personalizedLinkKey} linkId={linkId} link={link} updatePersonalizedLink={updatePersonalizedLink} />
+                            <CustomLinkForm personalizedLinkKey={personalizedLinkKey} linkId={linkId} link={link} updatePersonalizedLink={updatePersonalizedLink} closeDialog={() => setEditOpen(false)} />
                         </DialogContent>
                     </Dialog>
                     <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
@@ -357,7 +359,7 @@ function CustomLink({
     )
 }
 
-function CustomLinkForm({ personalizedLinkKey, link, linkId, updatePersonalizedLink }: { personalizedLinkKey: number, linkId: string, link: z.infer<typeof customLinkSchema>, updatePersonalizedLink: (link: CustomLinkType[0], linkIndex: number) => void }) {
+function CustomLinkForm({ personalizedLinkKey, link, linkId, updatePersonalizedLink, closeDialog }: { personalizedLinkKey: number, linkId: string, link: z.infer<typeof customLinkSchema>, updatePersonalizedLink: (link: CustomLinkType[0], linkIndex: number) => void, closeDialog: () => void }) {
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const form = useForm<z.infer<typeof customLinkSchema>>({
@@ -390,11 +392,12 @@ function CustomLinkForm({ personalizedLinkKey, link, linkId, updatePersonalizedL
 
             if (res.ok) {
                 updatePersonalizedLink(result.link, personalizedLinkKey);
-
                 toast({
                     title: "Votre liiink a été mis à jour avec succès.",
                     ...toastSuccessProperties
                 })
+
+                closeDialog();
             } else {
                 toast({
                     title: result.error ? result.message : "Une erreur est survenue",
@@ -452,7 +455,7 @@ function CustomLinkForm({ personalizedLinkKey, link, linkId, updatePersonalizedL
     )
 }
 
-function AddCustomLinkForm({ linkId, addPersonalizedLink }: { linkId: string, addPersonalizedLink: (link: CustomLinkType[0]) => void }) {
+function AddCustomLinkForm({ linkId, addPersonalizedLink, closeModal }: { linkId: string, addPersonalizedLink: (link: CustomLinkType[0]) => void, closeModal: () => void }) {
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const form = useForm<z.infer<typeof customLinkSchema>>({
@@ -488,6 +491,8 @@ function AddCustomLinkForm({ linkId, addPersonalizedLink }: { linkId: string, ad
                     title: "Votre lien a été ajouté avec succès.",
                     ...toastSuccessProperties
                 })
+
+                closeModal();
             } else {
                 toast({
                     title: result.error ? result.message : "Une erreur est survenue",
