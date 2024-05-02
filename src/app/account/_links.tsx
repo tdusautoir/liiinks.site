@@ -20,6 +20,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { LinksType } from "@/lib/db/links"
+import { DialogTrigger } from "@radix-ui/react-dialog"
 
 const socialsFormSchema = z.object({
     twitter: z.string().optional(),
@@ -148,6 +149,15 @@ function CustomLinks() {
             {urls.map((link, key) => (
                 <CustomLink key={key} link={link} />
             ))}
+            <Dialog>
+                <DialogTrigger asChild><Button variant="outline" className="mr-auto">Ajouter</Button></DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Ajouter un lien personnalisé</DialogTitle>
+                    </DialogHeader>
+                    <AddCustomLinkForm />
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
@@ -218,40 +228,88 @@ function CustomLinkForm({ link }: { link: z.infer<typeof customLinkSchema> }) {
     }
 
     return (
-        <>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-                    <FormField
-                        control={form.control}
-                        name="label"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Libellé</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="url"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>URL</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <DialogFooter>
-                        <Button className="w-fit">Enregistrer</Button>
-                    </DialogFooter>
-                </form>
-            </Form>
-        </>
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                <FormField
+                    control={form.control}
+                    name="label"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Libellé</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="url"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>URL</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <DialogFooter>
+                    <Button className="w-fit">Enregistrer</Button>
+                </DialogFooter>
+            </form>
+        </Form>
+    )
+}
+
+function AddCustomLinkForm() {
+    const form = useForm<z.infer<typeof customLinkSchema>>({
+        resolver: zodResolver(customLinkSchema),
+        defaultValues: {
+            url: "",
+            label: "",
+        },
+    });
+
+    function onSubmit(values: z.infer<typeof customLinkSchema>) {
+        console.log(values);
+    }
+
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                <FormField
+                    control={form.control}
+                    name="label"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Libellé</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="url"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>URL</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <DialogFooter>
+                    <Button className="w-fit">Ajouter</Button>
+                </DialogFooter>
+            </form>
+        </Form>
     )
 }
