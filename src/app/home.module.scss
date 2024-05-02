@@ -2,7 +2,7 @@
     padding: 1rem;
     padding: calc(56px + 1rem) 0;
     text-align: center;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -17,16 +17,86 @@
     }
 
     h1 {
-        font-size: 56px;
+        font-size: max(48px,min(5vw,76px));
         font-weight: 700;
         padding: 1.5rem;
-        line-height: 1.2;
+        padding-bottom: 0rem;
+        line-height: 1.2;   
+        text-wrap: balance;
     }
 
     p {
+        font-size: max(16px,min(2vw,20px));
         margin: 0 auto;
-        max-width: 750px;
+        max-width: 800px;
         padding: 1.5rem;
         padding-top: 0;
+    }
+
+    .herobanner {
+        margin: 4rem 0;
+    }
+
+    .gridContainer {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem;
+        margin: auto;
+        max-width: 1200px;
+
+        @media screen and (max-width: 400px ) {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    .card {
+        background-color: var(--color-white);
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        transition: all 0.3s ease;
+        border: 1px solid #eaeaea;
+
+        &:hover {
+            border: 1px solid #9d9d9d;
+        }
+
+        div {
+            min-height: 250px;
+            width: 100%;
+            border-radius: 12px;
+        }
+
+        .gradient{
+            background: linear-gradient(to bottom right, #ff7e5f, #feb47b);
+        }
+
+        .secondGradient {
+            background-color: #caf903;
+            background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
+        }
+
+        .thirdGradient {
+            background-color: #8BC6EC;
+            background-image: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        p {
+            font-size: 1rem;
+            margin: 0;
+            padding: 0rem;
+            text-align: left;
+        }
     }
 }
