@@ -34,27 +34,3 @@ export async function PUT(req: NextRequest, res: NextResponse) {
         ), { status: 400 });
     }
 }
-
-export async function POST(req: NextRequest, res: NextResponse) {
-    try {
-        const body = await req.json();
-
-        const { url, label, linkId } = body as { url: string, label: string, linkId: string };
-
-        const link = await createPersonalizedLinks(linkId, label, url);
-
-        return new NextResponse(JSON.stringify(
-            { error: false, message: "Votre lien personnalisé a été créé avec succès.", link }
-        ), { status: 200 });
-    } catch (error) {
-        if (error === 'tooManyLinks') {
-            return new NextResponse(JSON.stringify(
-                { error: true, message: "Vous avez atteint le nombre maximum de liens personnalisés." }
-            ), { status: 400 });
-        }
-
-        return new NextResponse(JSON.stringify(
-            { error: true, message: "Une erreur s'est produite lors de la création de votre liiink." }
-        ), { status: 400 });
-    }
-}

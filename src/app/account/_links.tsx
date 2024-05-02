@@ -22,7 +22,7 @@ import {
 import { LinksType } from "@/lib/db/linksHelper"
 import { DialogTrigger } from "@radix-ui/react-dialog"
 import { toastErrorProperties, toastSuccessProperties } from "@/components/ui/toast"
-import { useToast } from "@/components/ui/use-toast"
+import { toast, useToast } from "@/components/ui/use-toast"
 
 const socialsFormSchema = z.object({
     twitter: z.string().url({
@@ -65,18 +65,23 @@ export default function LinksPage({ link }: {
         setPersonalizedLinks((prev) => [...prev, link]);
     };
 
-    const removePersonalizedLinks = (id: string) => {
-        // setPersonalizedLinks((prev) => prev.filter((link) => link.id !== id));
+    const removePersonalizedLink = (linkIndex: number) => {
+        setPersonalizedLinks((prev) => [...prev.slice(0, linkIndex), ...prev.slice(linkIndex + 1)]);
     }
 
-    const updatePersonalizedLink = (id: string, link: CustomLinkType[0], linkIndex: number) => {
+    const updatePersonalizedLink = (link: CustomLinkType[0], linkIndex: number) => {
         setPersonalizedLinks((prev) => [...prev.slice(0, linkIndex), link, ...prev.slice(linkIndex + 1)]);
     }
 
     return (
         <div className="flex">
             <Socials link={link} />
-            <CustomLinks linkId={link.id} customLinks={personalizedLinks} addPersonalizedLink={addPersonalizedLink} updatePersonalizedLink={updatePersonalizedLink} />
+            <CustomLinks
+                linkId={link.id}
+                customLinks={personalizedLinks}
+                addPersonalizedLink={addPersonalizedLink}
+                updatePersonalizedLink={updatePersonalizedLink}
+                removePersonalizedLink={removePersonalizedLink} />
         </div>
     )
 }
@@ -223,19 +228,21 @@ function CustomLinks({
     linkId,
     customLinks,
     addPersonalizedLink,
-    updatePersonalizedLink
+    updatePersonalizedLink,
+    removePersonalizedLink
 }: {
     linkId: string,
     customLinks: CustomLinkType,
     addPersonalizedLink: (link: CustomLinkType[0]) => void,
-    updatePersonalizedLink: (id: string, link: CustomLinkType[0], linkIndex: number) => void
+    updatePersonalizedLink: (link: CustomLinkType[0], linkIndex: number) => void,
+    removePersonalizedLink: (linkIndex: number) => void
 }) {
     return (
         <div className="flex flex-col gap-4 w-full max-w-xl p-4">
             <h2>Liens personnalisés</h2>
             <p className="text-sm text-muted-foreground">Vous pouvez ajouter jusqu&apos;à 5 liens vers vos projets, site web, portfolio, etc.</p>
             {customLinks.map((link, key) => (
-                <CustomLink key={key} link={link} linkId={linkId} personalizedLinkKey={key} updatePersonalizedLink={updatePersonalizedLink} />
+                <CustomLink key={key} link={link} linkId={linkId} personalizedLinkKey={key} updatePersonalizedLink={updatePersonalizedLink} removePersonalizedLink={removePersonalizedLink} />
             ))}
             <Dialog>
                 <DialogTrigger asChild><Button variant="outline" className="mr-auto">Ajouter</Button></DialogTrigger>
@@ -250,9 +257,54 @@ function CustomLinks({
     )
 }
 
-function CustomLink({ linkId, personalizedLinkKey, link, updatePersonalizedLink }: { linkId: string, personalizedLinkKey: number, link: z.infer<typeof customLinkSchema>, updatePersonalizedLink: (id: string, link: CustomLinkType[0], linkIndex: number) => void }) {
+function CustomLink({
+    linkId,
+    personalizedLinkKey,
+    link,
+    updatePersonalizedLink,
+    removePersonalizedLink
+}: {
+    linkId: string,
+    personalizedLinkKey: number,
+    link: z.infer<typeof customLinkSchema>,
+    updatePersonalizedLink: (link: CustomLinkType[0], linkIndex: number) => void,
+    removePersonalizedLink: (linkIndex: number) => void
+}) {
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
+
+    const deletePersonalizedLink = async () => {
+        try {
+            const res = await fetch("/api/account/links/personalizedLinks", {
+                method: "DELETE",
+                body: JSON.stringify({
+                    linkId,
+                    personalizedLinkKey
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+
+            const result = await res.json();
+
+            if (res.ok) {
+                removePersonalizedLink(personalizedLinkKey);
+
+                toast({
+                    title: "Votre lien a été supprimé avec succès.",
+                    ...toastSuccessProperties
+                })
+            } else {
+                toast({
+                    title: result.error ? result.message : "Une erreur est survenue",
+                    ...toastErrorProperties
+                })
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     return (
         <div className="flex gap-2 max-w-sm">
@@ -294,7 +346,7 @@ function CustomLink({ linkId, personalizedLinkKey, link, updatePersonalizedLink 
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>Annuler</AlertDialogCancel>
-                                <AlertDialogAction className={buttonVariants({ variant: "destructive" })}>Supprimer</AlertDialogAction>
+                                <AlertDialogAction className={buttonVariants({ variant: "destructive" })} onClick={() => deletePersonalizedLink()}>Supprimer</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
@@ -304,7 +356,7 @@ function CustomLink({ linkId, personalizedLinkKey, link, updatePersonalizedLink 
     )
 }
 
-function CustomLinkForm({ personalizedLinkKey, link, linkId, updatePersonalizedLink }: { personalizedLinkKey: number, linkId: string, link: z.infer<typeof customLinkSchema>, updatePersonalizedLink: (id: string, link: CustomLinkType[0], linkIndex: number) => void }) {
+function CustomLinkForm({ personalizedLinkKey, link, linkId, updatePersonalizedLink }: { personalizedLinkKey: number, linkId: string, link: z.infer<typeof customLinkSchema>, updatePersonalizedLink: (link: CustomLinkType[0], linkIndex: number) => void }) {
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const form = useForm<z.infer<typeof customLinkSchema>>({
@@ -336,7 +388,7 @@ function CustomLinkForm({ personalizedLinkKey, link, linkId, updatePersonalizedL
             const result = await res.json();
 
             if (res.ok) {
-                updatePersonalizedLink(linkId, result.link, personalizedLinkKey);
+                updatePersonalizedLink(result.link, personalizedLinkKey);
 
                 toast({
                     title: "Votre liiink a été mis à jour avec succès.",
@@ -413,7 +465,7 @@ function AddCustomLinkForm({ linkId, addPersonalizedLink }: { linkId: string, ad
     const onSubmit = async (values: z.infer<typeof customLinkSchema>) => {
         try {
             setLoading(true);
-            const res = await fetch("/api/account/links", {
+            const res = await fetch("/api/account/links/personalizedLinks", {
                 method: "POST",
                 body: JSON.stringify({
                     ...values,

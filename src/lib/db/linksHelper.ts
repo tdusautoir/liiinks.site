@@ -222,14 +222,12 @@ export const deletePersonalizedLinks = async (linkId: string, personalizedLinkIn
                 console.log('error', error);
             }
 
-            const index = formatPersonalizedLinks.findIndex(personalizedLinkIndex);
-
-            if (index === -1) {
+            if (formatPersonalizedLinks[personalizedLinkIndex] === undefined) {
                 reject('linkNotFound');
                 return;
             }
 
-            formatPersonalizedLinks.splice(index, 1);
+            formatPersonalizedLinks.splice(personalizedLinkIndex, 1);
 
             base('links').update([
                 {
