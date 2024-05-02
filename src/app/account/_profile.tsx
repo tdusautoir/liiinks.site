@@ -29,6 +29,7 @@ const formSchema = z.object({
     }).max(50, {
         message: "Le nom d'utilisateur doit contenir au plus 50 caractères.",
     }),
+    avatar: z.string().optional(),
     bio: z.string().min(1, {
         message: "La biographie est obligatoire.",
     }).max(255, {
@@ -44,6 +45,7 @@ export default function Profile({ user }: { user: UsersType[0] }) {
             lastname: user.lastname,
             username: user.username,
             email: user.email,
+            avatar: "",
         },
     });
 
@@ -102,6 +104,19 @@ export default function Profile({ user }: { user: UsersType[0] }) {
                             <FormLabel>Nom</FormLabel>
                             <FormControl>
                                 <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="avatar"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Avatar</FormLabel>
+                            <FormControl>
+                                <Input type="file" accept="image/png,image/jpeg,image/jpg," {...field} className="cursor-pointer" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
