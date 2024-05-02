@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { getUserWithLinkByUsername } from "@/lib/db/userHelper";
 import { getInitials } from "@/lib/utils";
 import { notFound } from "next/navigation";
+import { track } from '@vercel/analytics';
 
 export default async function Profile({ params: { username } }: { params: { username: string } }) {
     const user = await getUserWithLinkByUsername(username);
@@ -55,7 +56,12 @@ export default async function Profile({ params: { username } }: { params: { user
 
                     return (
                         <li key={key} className="w-full">
-                            <Button asChild className="w-full">
+                            <Button asChild className="w-full" onClick={() => {
+                                track('profile_social_link_click', {
+                                    username,
+                                    social: label
+                                })
+                            }}>
                                 <Link href={url}>{label}</Link>
                             </Button>
                         </li>
