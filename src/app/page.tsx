@@ -1,14 +1,10 @@
-import Card from "@/components/Card/Card";
-
-// Positon possible -> left / right / none
+import Header from "@/components/header/header";
+import { Fragment } from "react";
 
 export default function Home() {
   return (
-    <>
-        <Card />
-
-        <a href="/custom" className="personnalisation">
-        </a>
-    </>
+    <Fragment>
+      <Header />
+    </Fragment >
   );
 }
