@@ -59,7 +59,7 @@ export default async function Profile({ params: { username } }: { params: { user
             </Avatar>
             <div>
                 <h1>{user.firstname} {user.lastname}</h1>
-                {user.bio && <p className="text-sm text-muted-foreground">{user.bio}</p>}
+                {user.bio && <p className="text-sm text-neutral-950">{user.bio}</p>}
             </div>
             <ul className="flex flex-col gap-2 w-full items-center">
                 {Object.keys(socialLinks).map((key) => {

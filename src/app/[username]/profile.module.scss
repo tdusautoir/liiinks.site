@@ -7,13 +7,33 @@
     padding: 1rem;
     width: 100%;
     min-height: 100vh;
-    margin: 0 auto;
-    max-width: 480px;
-    width: 100%;
     text-align: center;
-
+    
+    --primary-bg-color: #8BC6EC;
+    --secondary-bg-color: #9599E2;
+    
+    /* Définir le dégradé initial */
+    background: linear-gradient(135deg, var(--primary-bg-color) 0%, var(--secondary-bg-color) 100%);
+    background-size: 200% 200%;
+    
+    /* Ajouter l'animation au dégradé */
+    animation: animate-gradient 10s ease-in-out infinite;
+    
     h1 {
         font-size: 1.5rem;
         font-weight: 700;
     }
+}
+
+/* Définir l'animation de gradient */
+@keyframes animate-gradient {
+    0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
