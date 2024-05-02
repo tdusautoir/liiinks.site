@@ -3,10 +3,12 @@ import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Lock } from "lucide-react";
+import { Loader2, Lock } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { UsersType } from "@/lib/db/userHelper"
+import { useState } from "react"
+import { useToast } from "@/components/ui/use-toast"
 
 const formSchema = z.object({
     firstname: z.string().min(1, {
@@ -29,14 +31,14 @@ const formSchema = z.object({
     }).max(50, {
         message: "Le nom d'utilisateur doit contenir au plus 50 caractères.",
     }),
-    bio: z.string().min(1, {
-        message: "La biographie est obligatoire.",
-    }).max(255, {
+    bio: z.string().max(255, {
         message: "La biographie doit contenir au plus 255 caractères.",
-    })
+    }).optional()
 })
 
 export default function Profile({ user }: { user: UsersType[0] }) {
+    const [loading, setLoading] = useState(false);
+    const { toast } = useToast();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -44,11 +46,62 @@ export default function Profile({ user }: { user: UsersType[0] }) {
             lastname: user.lastname,
             username: user.username,
             email: user.email,
+            bio: user.bio,
         },
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        setLoading(true);
+
+        try {
+            const res = await fetch("/api/account/profile", {
+                method: "PUT",
+                body: JSON.stringify(values),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+
+            setLoading(false);
+
+            const result = await res.json();
+
+            if (res.ok) {
+                toast({
+                    title: "Votre profil a été mis à jour avec succès.",
+                    style: {
+                        backgroundColor: "#34D399",
+                        color: "#FFFFFF",
+                    },
+                    duration: 4000
+                })
+
+                if (result.user.changeUsername) {
+                    window.location.reload();
+                }
+            } else {
+                toast({
+                    title: result.error ? result.message : "Une erreur est survenue",
+                    style: {
+                        backgroundColor: "#EF4444",
+                        color: "#FFFFFF",
+                    },
+                    duration: 4000
+                })
+            }
+        } catch (error) {
+            console.error('DWADAW', error);
+            setLoading(false);
+
+            toast({
+                title: "Une erreur est survenue",
+                style: {
+                    backgroundColor: "#EF4444",
+                    color: "#FFFFFF",
+                },
+                duration: 4000
+            })
+        }
     }
 
     return (
@@ -73,9 +126,9 @@ export default function Profile({ user }: { user: UsersType[0] }) {
                     name="username"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="inline-flex"><Lock className="mr-1 h-3 w-3" />Username</FormLabel>
+                            <FormLabel className="inline-flex">Username</FormLabel>
                             <FormControl>
-                                <Input {...field} disabled />
+                                <Input {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -120,7 +173,12 @@ export default function Profile({ user }: { user: UsersType[0] }) {
                         </FormItem>
                     )}
                 />
-                <Button className="w-fit">Enregistrer les modifications</Button>
+                <Button disabled={loading} className="w-fit" type="submit">
+                    {loading ? <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Chargement...
+                    </> : "Emregistrer les modifications"}
+                </Button>
             </form>
         </Form>
     )
