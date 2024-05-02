@@ -131,7 +131,6 @@ export const createPersonalizedLinks = async (linkId: string, label: string, url
             }
         ).firstPage(function (err, records) {
             if (err) {
-                console.log('test');
                 console.error(err);
                 reject(err);
                 return;
@@ -169,6 +168,138 @@ export const createPersonalizedLinks = async (linkId: string, label: string, url
                                 label
                             }
                         ])
+                    }
+                }
+            ], function (err, records) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                    return;
+                }
+
+                if (!records || records.length === 0) {
+                    console.error("No records found");
+                    resolve(null);
+                    return;
+                }
+
+                const record = records[0];
+
+                resolve({
+                    url,
+                    label
+                });
+            });
+        })
+    });
+}
+
+export const deletePersonalizedLinks = async (linkId: string, personalizedLinkIndex: string): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+        base('links').select(
+            {
+                filterByFormula: `RECORD_ID() = "${linkId}"`
+            }
+        ).firstPage(function (err, records) {
+            if (err) {
+                console.error(err);
+                reject(err);
+                return;
+            }
+
+            if (!records || records.length === 0) {
+                console.error("No records found");
+                resolve(false);
+                return;
+            }
+
+            const personalizedLinks = records[0].get("personalizedLinks") as string | undefined;
+
+            let formatPersonalizedLinks = [];
+            try {
+                formatPersonalizedLinks = personalizedLinks !== undefined ? JSON.parse(personalizedLinks) : [];
+            } catch (error) {
+                console.log('error', error);
+            }
+
+            const index = formatPersonalizedLinks.findIndex(personalizedLinkIndex);
+
+            if (index === -1) {
+                reject('linkNotFound');
+                return;
+            }
+
+            formatPersonalizedLinks.splice(index, 1);
+
+            base('links').update([
+                {
+                    id: records[0].id,
+                    fields: {
+                        personalizedLinks: JSON.stringify(formatPersonalizedLinks)
+                    }
+                }
+            ], function (err, records) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                    return;
+                }
+
+                if (!records || records.length === 0) {
+                    console.error("No records found");
+                    resolve(false);
+                    return;
+                }
+
+                resolve(true);
+            });
+        })
+    });
+}
+
+export const updatePersonalizedLink = async (linkId: string, personalizedLinkIndex: string, label: string, url: string): Promise<{ url: string, label: string } | null> => {
+    return new Promise((resolve, reject) => {
+        base('links').select(
+            {
+                filterByFormula: `RECORD_ID() = "${linkId}"`
+            }
+        ).firstPage(function (err, records) {
+            if (err) {
+                console.error(err);
+                reject(err);
+                return;
+            }
+
+            if (!records || records.length === 0) {
+                console.error("No records found");
+                resolve(null);
+                return;
+            }
+
+            const personalizedLinks = records[0].get("personalizedLinks") as string | undefined;
+
+            let formatPersonalizedLinks = [];
+            try {
+                formatPersonalizedLinks = personalizedLinks !== undefined ? JSON.parse(personalizedLinks) : [];
+            } catch (error) {
+                console.log('error', error);
+            }
+
+            if (formatPersonalizedLinks[personalizedLinkIndex] === undefined) {
+                reject('linkNotFound');
+                return;
+            }
+
+            formatPersonalizedLinks[personalizedLinkIndex] = {
+                url,
+                label
+            };
+
+            base('links').update([
+                {
+                    id: records[0].id,
+                    fields: {
+                        personalizedLinks: JSON.stringify(formatPersonalizedLinks)
                     }
                 }
             ], function (err, records) {

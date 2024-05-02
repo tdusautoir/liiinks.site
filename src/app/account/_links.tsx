@@ -7,7 +7,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { EllipsisVertical, Loader2, PenBox, Trash } from "lucide-react"
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { useState } from "react"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -20,7 +20,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { LinksType } from "@/lib/db/linksHelper"
-import { Close, DialogTrigger } from "@radix-ui/react-dialog"
+import { DialogTrigger } from "@radix-ui/react-dialog"
 import { toastErrorProperties, toastSuccessProperties } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
 
@@ -61,7 +61,7 @@ export default function LinksPage({ link }: {
 }) {
     const [personalizedLinks, setPersonalizedLinks] = useState<CustomLinkType>(link.personalizedLinks);
 
-    const addPersonalizedLinks = (link: CustomLinkType[0]) => {
+    const addPersonalizedLink = (link: CustomLinkType[0]) => {
         setPersonalizedLinks((prev) => [...prev, link]);
     };
 
@@ -69,10 +69,14 @@ export default function LinksPage({ link }: {
         // setPersonalizedLinks((prev) => prev.filter((link) => link.id !== id));
     }
 
+    const updatePersonalizedLink = (id: string, link: CustomLinkType[0], linkIndex: number) => {
+        setPersonalizedLinks((prev) => [...prev.slice(0, linkIndex), link, ...prev.slice(linkIndex + 1)]);
+    }
+
     return (
         <div className="flex">
             <Socials link={link} />
-            <CustomLinks linkId={link.id} customLinks={personalizedLinks} addPersonalizedLinks={addPersonalizedLinks} />
+            <CustomLinks linkId={link.id} customLinks={personalizedLinks} addPersonalizedLink={addPersonalizedLink} updatePersonalizedLink={updatePersonalizedLink} />
         </div>
     )
 }
@@ -215,13 +219,23 @@ function Socials({ link }: {
     )
 }
 
-function CustomLinks({ linkId, customLinks, addPersonalizedLinks }: { linkId: string, customLinks: CustomLinkType, addPersonalizedLinks: (link: CustomLinkType[0]) => void }) {
+function CustomLinks({
+    linkId,
+    customLinks,
+    addPersonalizedLink,
+    updatePersonalizedLink
+}: {
+    linkId: string,
+    customLinks: CustomLinkType,
+    addPersonalizedLink: (link: CustomLinkType[0]) => void,
+    updatePersonalizedLink: (id: string, link: CustomLinkType[0], linkIndex: number) => void
+}) {
     return (
         <div className="flex flex-col gap-4 w-full max-w-xl p-4">
             <h2>Liens personnalisés</h2>
             <p className="text-sm text-muted-foreground">Vous pouvez ajouter jusqu&apos;à 5 liens vers vos projets, site web, portfolio, etc.</p>
             {customLinks.map((link, key) => (
-                <CustomLink key={key} link={link} linkId={linkId} addPersonalizedLinks={addPersonalizedLinks} />
+                <CustomLink key={key} link={link} linkId={linkId} personalizedLinkKey={key} updatePersonalizedLink={updatePersonalizedLink} />
             ))}
             <Dialog>
                 <DialogTrigger asChild><Button variant="outline" className="mr-auto">Ajouter</Button></DialogTrigger>
@@ -229,17 +243,16 @@ function CustomLinks({ linkId, customLinks, addPersonalizedLinks }: { linkId: st
                     <DialogHeader>
                         <DialogTitle>Ajouter un lien personnalisé</DialogTitle>
                     </DialogHeader>
-                    <AddCustomLinkForm linkId={linkId} addPersonalizedLinks={addPersonalizedLinks} />
+                    <AddCustomLinkForm linkId={linkId} addPersonalizedLink={addPersonalizedLink} />
                 </DialogContent>
             </Dialog>
         </div>
     )
 }
 
-function CustomLink({ linkId, link, addPersonalizedLinks }: { linkId: string, link: z.infer<typeof customLinkSchema>, addPersonalizedLinks: (link: CustomLinkType[0]) => void }) {
+function CustomLink({ linkId, personalizedLinkKey, link, updatePersonalizedLink }: { linkId: string, personalizedLinkKey: number, link: z.infer<typeof customLinkSchema>, updatePersonalizedLink: (id: string, link: CustomLinkType[0], linkIndex: number) => void }) {
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
-    console.log(link);
 
     return (
         <div className="flex gap-2 max-w-sm">
@@ -270,7 +283,7 @@ function CustomLink({ linkId, link, addPersonalizedLinks }: { linkId: string, li
                             <DialogHeader>
                                 <DialogTitle>Modifier le lien</DialogTitle>
                             </DialogHeader>
-                            <CustomLinkForm linkId={linkId} link={link} addPersonalizedLinks={addPersonalizedLinks} />
+                            <CustomLinkForm personalizedLinkKey={personalizedLinkKey} linkId={linkId} link={link} updatePersonalizedLink={updatePersonalizedLink} />
                         </DialogContent>
                     </Dialog>
                     <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
@@ -291,8 +304,9 @@ function CustomLink({ linkId, link, addPersonalizedLinks }: { linkId: string, li
     )
 }
 
-function CustomLinkForm({ linkId, link, addPersonalizedLinks }: { linkId: string, link: z.infer<typeof customLinkSchema>, addPersonalizedLinks: (link: CustomLinkType[0]) => void }) {
+function CustomLinkForm({ personalizedLinkKey, link, linkId, updatePersonalizedLink }: { personalizedLinkKey: number, linkId: string, link: z.infer<typeof customLinkSchema>, updatePersonalizedLink: (id: string, link: CustomLinkType[0], linkIndex: number) => void }) {
     const { toast } = useToast();
+    const [loading, setLoading] = useState(false);
     const form = useForm<z.infer<typeof customLinkSchema>>({
         resolver: zodResolver(customLinkSchema),
         defaultValues: {
@@ -301,8 +315,47 @@ function CustomLinkForm({ linkId, link, addPersonalizedLinks }: { linkId: string
         },
     });
 
-    function onSubmit(values: z.infer<typeof customLinkSchema>) {
-        // addPersonalizedLinks(values);
+    const onSubmit = async (values: z.infer<typeof customLinkSchema>) => {
+        setLoading(true);
+
+        try {
+            const res = await fetch("/api/account/links/personalizedLinks", {
+                method: "PUT",
+                body: JSON.stringify({
+                    linkId,
+                    personalizedLinkKey,
+                    ...values
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+
+            setLoading(false);
+
+            const result = await res.json();
+
+            if (res.ok) {
+                updatePersonalizedLink(linkId, result.link, personalizedLinkKey);
+
+                toast({
+                    title: "Votre liiink a été mis à jour avec succès.",
+                    ...toastSuccessProperties
+                })
+            } else {
+                toast({
+                    title: result.error ? result.message : "Une erreur est survenue",
+                    ...toastErrorProperties
+                })
+            }
+        } catch (error) {
+            setLoading(false);
+
+            toast({
+                title: "Une erreur est survenue",
+                ...toastErrorProperties
+            })
+        }
     }
 
     return (
@@ -335,14 +388,18 @@ function CustomLinkForm({ linkId, link, addPersonalizedLinks }: { linkId: string
                     )}
                 />
                 <DialogFooter>
-                    <Button className="w-fit">Enregistrer</Button>
+                    <Button className="w-fit" disabled={loading}>
+                        {loading ? <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Chargement...
+                        </> : "Enregistrer"}</Button>
                 </DialogFooter>
             </form>
         </Form>
     )
 }
 
-function AddCustomLinkForm({ linkId, addPersonalizedLinks }: { linkId: string, addPersonalizedLinks: (link: CustomLinkType[0]) => void }) {
+function AddCustomLinkForm({ linkId, addPersonalizedLink }: { linkId: string, addPersonalizedLink: (link: CustomLinkType[0]) => void }) {
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const form = useForm<z.infer<typeof customLinkSchema>>({
@@ -372,7 +429,7 @@ function AddCustomLinkForm({ linkId, addPersonalizedLinks }: { linkId: string, a
             const result = await res.json();
 
             if (res.ok) {
-                addPersonalizedLinks(result.link);
+                addPersonalizedLink(result.link);
 
                 toast({
                     title: "Votre lien a été ajouté avec succès.",
