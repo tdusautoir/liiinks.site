@@ -75,26 +75,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-.personnalisation {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 40px;
-  height: 40px;
-  border: 1px solid white;
-  border-radius: 100vmax;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.personnalisation::after {
-  content: "?";
-  display: block;
-  position: absolute;
-  top: 50%;
-  right: 50%;
-  transform: translate(50%, -50%);
-}

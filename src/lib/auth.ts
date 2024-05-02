@@ -19,8 +19,8 @@ export const authOptions: AuthOptions = {
                 resend.emails.send({
                     from: 'noreply@achille-david.com',
                     to: email,
-                    subject: 'Magic Link',
-                    html: `<p>Click on the link below to sign in:</p><a href="${url}">Sign In</a>`
+                    subject: 'liiinks - Magic Link',
+                    html: `<p>Cliquer sur le lien ci-dessous pour vous connecter :</p><a href="${url}">Se connecter</a>`
                 });
             }
 

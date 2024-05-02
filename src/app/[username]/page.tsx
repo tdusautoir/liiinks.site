@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { getUserWithLinkByUsername } from "@/lib/db/userHelper";
 import { getInitials } from "@/lib/utils";
 import { notFound } from "next/navigation";
+import CustomLink from "./link";
 
 export default async function Profile({ params: { username } }: { params: { username: string } }) {
     const user = await getUserWithLinkByUsername(username);
@@ -49,14 +50,13 @@ export default async function Profile({ params: { username } }: { params: { user
             <ul className="flex flex-col gap-2 w-full items-center">
                 {Object.keys(socialLinks).map((key) => {
                     const url = socialLinks[key].url;
+                    const label = socialLinks[key].label;
 
                     if (url === undefined) return null;
 
                     return (
                         <li key={key} className="w-full">
-                            <Button asChild className="w-full">
-                                <Link href={url}>{key}</Link>
-                            </Button>
+                            <CustomLink username={username} url={url} label={label} />
                         </li>
                     )
                 })}

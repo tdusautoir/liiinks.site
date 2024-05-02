@@ -1,16 +1,6 @@
 .container {
     padding-top: 56px;
-    height: 100vh;
-
-    .head {
-        padding: 1rem;
-        padding-top: 0;
-
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-    }
+    min-height: 100vh;
 
     .content {
         display: grid;
@@ -22,6 +12,8 @@
             flex-direction: column;
             gap: 0.25rem;
             padding: 1rem;
+            padding-top: 0;
+            background-color: #fff;
 
             button {
                 justify-content: flex-start;
@@ -29,12 +21,39 @@
         }
 
         &>form,
-        &>div {
+        &>.links {
             h2 {
                 font-size: 1.25rem;
                 font-weight: 600;
             }
         }
-    }
 
+        .links {
+            display: flex;
+        }
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .container {
+        .content {
+            .links {
+                flex-direction: column;
+            }
+
+            * {
+                max-width: unset !important;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 720px) {
+    .container {
+        .content {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+    }
 }

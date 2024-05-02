@@ -45,11 +45,6 @@ export default function Dashboard({ user }: { user: UsersType[0] & { link: Links
         <Fragment>
             <Header />
             <main className={style.container}>
-                <div className={style.head}>
-                    <h1>Paramètres</h1>
-                    <p>Gérer les paramètres de votre compte et modifier la liste de vos liens.</p>
-                </div>
-                <Separator />
                 <div className={style.content}>
                     <div className={style.menu}>
                         {Object.keys(steps).map((key) => (

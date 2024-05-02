@@ -6,6 +6,7 @@ import { authOptions } from '@/lib/auth'
 import SessionProvider from "@/providers/SessionProvider";
 import "@/styles/globals.css";
 import { cn } from "@/lib/utils";
+import { Analytics } from "@vercel/analytics/react";
 
 const fontSans = Inter({
   subsets: ["latin"],
@@ -25,6 +26,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <SessionProvider session={session}>
           {children}
           <Toaster />
+          <Analytics />
         </SessionProvider>
       </body>
     </html>

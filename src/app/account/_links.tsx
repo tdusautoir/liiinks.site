@@ -23,6 +23,7 @@ import { LinksType } from "@/lib/db/linksHelper"
 import { DialogTrigger } from "@radix-ui/react-dialog"
 import { toastErrorProperties, toastSuccessProperties } from "@/components/ui/toast"
 import { toast, useToast } from "@/components/ui/use-toast"
+import style from "./account.module.scss"
 
 const socialsFormSchema = z.object({
     twitter: z.string().url({
@@ -74,7 +75,7 @@ export default function LinksPage({ link }: {
     }
 
     return (
-        <div className="flex">
+        <div className={style.links}>
             <Socials link={link} />
             <CustomLinks
                 linkId={link.id}
@@ -146,7 +147,7 @@ function Socials({ link }: {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full max-w-xl p-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full max-w-xl p-4 pt-0">
                 <h2>Réseaux sociaux</h2>
                 <FormField
                     control={form.control}
@@ -238,7 +239,7 @@ function CustomLinks({
     removePersonalizedLink: (linkIndex: number) => void
 }) {
     return (
-        <div className="flex flex-col gap-4 w-full max-w-xl p-4">
+        <div className="flex flex-col gap-4 w-full max-w-xl p-4 pt-0">
             <h2>Liens personnalisés</h2>
             <p className="text-sm text-muted-foreground">Vous pouvez ajouter jusqu&apos;à 5 liens vers vos projets, site web, portfolio, etc.</p>
             {customLinks.map((link, key) => (

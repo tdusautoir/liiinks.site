@@ -5,12 +5,23 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Loader2, Lock } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { UsersType } from "@/lib/db/userHelper"
 import { useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { toastErrorProperties, toastSuccessProperties } from "@/components/ui/toast"
 import { useSession } from "next-auth/react"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 const formSchema = z.object({
     firstname: z.string().min(1, {
@@ -106,7 +117,7 @@ export default function Profile({ user }: { user: UsersType[0] }) {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 flex-col max-w-xl p-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 flex-col max-w-xl p-4 pt-0">
                 <h2>Profil</h2>
                 <FormField
                     control={form.control}
@@ -192,6 +203,21 @@ export default function Profile({ user }: { user: UsersType[0] }) {
                         Chargement...
                     </> : "Emregistrer les modifications"}
                 </Button>
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button variant="destructive" className="w-fit">Supprimer le compte</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+                            <AlertDialogDescription>Vous êtes sur le point de supprimer votre compte. Cette action est irréversible.</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Annuler</AlertDialogCancel>
+                            <AlertDialogAction className={buttonVariants({ variant: "destructive" })}>Supprimer</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </form>
         </Form>
     )
