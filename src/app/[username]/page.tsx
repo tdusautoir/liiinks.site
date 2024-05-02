@@ -63,9 +63,7 @@ export default async function Profile({ params: { username } }: { params: { user
                 {user.link.personalizedLinks.map((link, index) => {
                     return (
                         <li key={index} className="w-full">
-                            <Button asChild className="w-full">
-                                <Link href={link.url}>{link.label}</Link>
-                            </Button>
+                            <CustomLink username={username} url={link.url} label={link.label} />
                         </li>
                     )
                 })}
