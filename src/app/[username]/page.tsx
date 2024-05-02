@@ -6,6 +6,20 @@ import { getUserWithLinkByUsername } from "@/lib/db/userHelper";
 import { getInitials } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import CustomLink from "./link";
+import { Metadata } from "next";
+
+export const generateMetadata = async (
+    props: { params: ParamsType }
+): Promise<Metadata> => {
+    const { params } = props
+    const user = await getUserWithLinkByUsername(params.username);
+    return {
+        title: user ? `${user.firstname} ${user.lastname} - liiinks` : "Page introuvable - liiinks",
+        description: user ? user.bio : "La page que vous cherchez n'existe pas.",
+    };
+};
+
+type ParamsType = { username: string }
 
 export default async function Profile({ params: { username } }: { params: { username: string } }) {
     const user = await getUserWithLinkByUsername(username);
