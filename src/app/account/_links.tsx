@@ -6,7 +6,7 @@ import { z } from "zod"
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { EllipsisVertical, PenBox, Trash } from "lucide-react"
+import { EllipsisVertical, Loader2, PenBox, Trash } from "lucide-react"
 import { useState } from "react"
 import {
     AlertDialog,
@@ -19,8 +19,10 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { LinksType } from "@/lib/db/links"
+import { LinksType } from "@/lib/db/linksHelper"
 import { DialogTrigger } from "@radix-ui/react-dialog"
+import { toastErrorProperties, toastSuccessProperties } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
 
 const socialsFormSchema = z.object({
     twitter: z.string().optional(),
@@ -45,6 +47,8 @@ export default function LinksPage({ link }: { link: LinksType[0] }) {
 }
 
 function Socials({ link }: { link: LinksType[0] }) {
+    const [loading, setLoading] = useState(false);
+    const { toast } = useToast();
     const form = useForm<z.infer<typeof socialsFormSchema>>({
         resolver: zodResolver(socialsFormSchema),
         defaultValues: {
@@ -56,8 +60,44 @@ function Socials({ link }: { link: LinksType[0] }) {
         },
     });
 
-    function onSubmit(values: z.infer<typeof socialsFormSchema>) {
-        console.log(values);
+    const onSubmit = async (values: z.infer<typeof socialsFormSchema>) => {
+        setLoading(true);
+
+        try {
+            const res = await fetch("/api/account/links", {
+                method: "PUT",
+                body: JSON.stringify({
+                    ...values,
+                    id: link.id
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+
+            setLoading(false);
+
+            const result = await res.json();
+
+            if (res.ok) {
+                toast({
+                    title: "Votre liiink a été mis à jour avec succès.",
+                    ...toastSuccessProperties
+                })
+            } else {
+                toast({
+                    title: result.error ? result.message : "Une erreur est survenue",
+                    ...toastErrorProperties
+                })
+            }
+        } catch (error) {
+            setLoading(false);
+
+            toast({
+                title: "Une erreur est survenue",
+                ...toastErrorProperties
+            })
+        }
     }
 
     return (
@@ -129,7 +169,12 @@ function Socials({ link }: { link: LinksType[0] }) {
                         </FormItem>
                     )}
                 />
-                <Button className="w-fit">Enregistrer les modifications</Button>
+                <Button disabled={loading} className="w-fit" type="submit">
+                    {loading ? <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Chargement...
+                    </> : "Emregistrer les modifications"}
+                </Button>
             </form>
         </Form>
     )

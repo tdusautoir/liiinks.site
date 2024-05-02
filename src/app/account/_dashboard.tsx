@@ -9,7 +9,7 @@ import Profile from "./_profile";
 import Links from "./_links";
 import MySpace from "./_my-space";
 import { UsersType } from "@/lib/db/userHelper";
-import { LinksType } from "@/lib/db/links";
+import { LinksType } from "@/lib/db/linksHelper";
 
 type Steps = {
     [key: string]: ReactNode;
