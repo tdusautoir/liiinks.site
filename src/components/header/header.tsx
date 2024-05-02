@@ -10,6 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { signOut, useSession } from "next-auth/react";
 import { UsersType } from "@/lib/db/userHelper";
 import { getInitials } from "@/lib/utils";
+import { Button } from "../ui/button";
 
 export default function Header({ asMenu = true }: { asMenu?: boolean }) {
     const { status } = useSession();
@@ -50,9 +51,7 @@ function MyProfile() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Avatar className="cursor-pointer mr-2">
-                    <AvatarFallback>{getInitials(user.firstname, user.lastname)}</AvatarFallback>
-                </Avatar>
+                <Button size="sm"><User className="w-4 h-4 mr-2" />{user.firstname}</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">
                 <DropdownMenuLabel>{user.firstname + " " + user.lastname}</DropdownMenuLabel>
