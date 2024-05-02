@@ -1,3 +1,4 @@
+import { isEmpty } from './../utils';
 import base from "../airtable";
 
 export type LinksType = Array<{
@@ -8,7 +9,7 @@ export type LinksType = Array<{
     linkedin?: string,
     twitter?: string,
     behance?: string,
-    personalizedLink?: string,
+    personalizedLinks?: string,
     updatedAt: string,
     createdAt: string,
 }>
@@ -42,7 +43,7 @@ export const getLinkByUsername = async (username: string): Promise<LinksType[0] 
                 linkedin: record.get("linkedin") as string | undefined,
                 twitter: record.get("twitter") as string | undefined,
                 behance: record.get("behance") as string | undefined,
-                personalizedLink: record.get("personalizedLink") as string | undefined,
+                personalizedLinks: record.get("personalizedLinks") as string | undefined,
                 updatedAt: record.get("updatedAt") as string,
                 createdAt: record.get("createdAt") as string,
             });
@@ -75,7 +76,7 @@ export const createLink = async (username: string): Promise<LinksType[0] | null>
                 linkedin: record.get("linkedin") as string | undefined,
                 twitter: record.get("twitter") as string | undefined,
                 behance: record.get("behance") as string | undefined,
-                personalizedLink: record.get("personalizedLink") as string | undefined,
+                personalizedLinks: record.get("personalizedLinks") as string | undefined,
                 updatedAt: record.get("updatedAt") as string,
                 createdAt: record.get("createdAt") as string,
             });
@@ -113,11 +114,212 @@ export const updateLink = async (id: string, data: UpdateLinkData): Promise<Link
                 linkedin: record.get("linkedin") as string | undefined,
                 twitter: record.get("twitter") as string | undefined,
                 behance: record.get("behance") as string | undefined,
-                personalizedLink: record.get("personalizedLink") as string | undefined,
+                personalizedLinks: record.get("personalizedLinks") as string | undefined,
                 updatedAt: record.get("updatedAt") as string,
                 createdAt: record.get("createdAt") as string,
             });
         });
 
+    });
+}
+
+export const createPersonalizedLinks = async (linkId: string, label: string, url: string): Promise<{ url: string, label: string } | null> => {
+    return new Promise((resolve, reject) => {
+        base('links').select(
+            {
+                filterByFormula: `RECORD_ID() = "${linkId}"`
+            }
+        ).firstPage(function (err, records) {
+            if (err) {
+                console.error(err);
+                reject(err);
+                return;
+            }
+
+            if (!records || records.length === 0) {
+                console.error("No records found");
+                resolve(null);
+                return;
+            }
+
+
+            const personalizedLinks = records[0].get("personalizedLinks") as string | undefined;
+
+            let formatPersonalizedLinks = [];
+            try {
+                formatPersonalizedLinks = personalizedLinks !== undefined ? JSON.parse(personalizedLinks) : [];
+            } catch (error) {
+                console.log('error', error);
+            }
+
+            if (formatPersonalizedLinks.length >= 5) {
+                reject('tooManyLinks');
+                return;
+            }
+
+            base('links').update([
+                {
+                    id: records[0].id,
+                    fields: {
+                        personalizedLinks: JSON.stringify([
+                            ...formatPersonalizedLinks,
+                            {
+                                url,
+                                label
+                            }
+                        ])
+                    }
+                }
+            ], function (err, records) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                    return;
+                }
+
+                if (!records || records.length === 0) {
+                    console.error("No records found");
+                    resolve(null);
+                    return;
+                }
+
+                const record = records[0];
+
+                resolve({
+                    url,
+                    label
+                });
+            });
+        })
+    });
+}
+
+export const deletePersonalizedLinks = async (linkId: string, personalizedLinkIndex: string): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+        base('links').select(
+            {
+                filterByFormula: `RECORD_ID() = "${linkId}"`
+            }
+        ).firstPage(function (err, records) {
+            if (err) {
+                console.error(err);
+                reject(err);
+                return;
+            }
+
+            if (!records || records.length === 0) {
+                console.error("No records found");
+                resolve(false);
+                return;
+            }
+
+            const personalizedLinks = records[0].get("personalizedLinks") as string | undefined;
+
+            let formatPersonalizedLinks = [];
+            try {
+                formatPersonalizedLinks = personalizedLinks !== undefined ? JSON.parse(personalizedLinks) : [];
+            } catch (error) {
+                console.log('error', error);
+            }
+
+            if (formatPersonalizedLinks[personalizedLinkIndex] === undefined) {
+                reject('linkNotFound');
+                return;
+            }
+
+            formatPersonalizedLinks.splice(personalizedLinkIndex, 1);
+
+            base('links').update([
+                {
+                    id: records[0].id,
+                    fields: {
+                        personalizedLinks: JSON.stringify(formatPersonalizedLinks)
+                    }
+                }
+            ], function (err, records) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                    return;
+                }
+
+                if (!records || records.length === 0) {
+                    console.error("No records found");
+                    resolve(false);
+                    return;
+                }
+
+                resolve(true);
+            });
+        })
+    });
+}
+
+export const updatePersonalizedLink = async (linkId: string, personalizedLinkIndex: string, label: string, url: string): Promise<{ url: string, label: string } | null> => {
+    return new Promise((resolve, reject) => {
+        base('links').select(
+            {
+                filterByFormula: `RECORD_ID() = "${linkId}"`
+            }
+        ).firstPage(function (err, records) {
+            if (err) {
+                console.error(err);
+                reject(err);
+                return;
+            }
+
+            if (!records || records.length === 0) {
+                console.error("No records found");
+                resolve(null);
+                return;
+            }
+
+            const personalizedLinks = records[0].get("personalizedLinks") as string | undefined;
+
+            let formatPersonalizedLinks = [];
+            try {
+                formatPersonalizedLinks = personalizedLinks !== undefined ? JSON.parse(personalizedLinks) : [];
+            } catch (error) {
+                console.log('error', error);
+            }
+
+            if (formatPersonalizedLinks[personalizedLinkIndex] === undefined) {
+                reject('linkNotFound');
+                return;
+            }
+
+            formatPersonalizedLinks[personalizedLinkIndex] = {
+                url,
+                label
+            };
+
+            base('links').update([
+                {
+                    id: records[0].id,
+                    fields: {
+                        personalizedLinks: JSON.stringify(formatPersonalizedLinks)
+                    }
+                }
+            ], function (err, records) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                    return;
+                }
+
+                if (!records || records.length === 0) {
+                    console.error("No records found");
+                    resolve(null);
+                    return;
+                }
+
+                const record = records[0];
+
+                resolve({
+                    url,
+                    label
+                });
+            });
+        })
     });
 }

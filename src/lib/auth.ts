@@ -27,8 +27,7 @@ export const authOptions: AuthOptions = {
         }),
     ],
     callbacks: {
-        async session({ session, token }) {
-
+        async session({ session, token, trigger }) {
             if (!session.user || !session.user.email) {
                 return session;
             }
