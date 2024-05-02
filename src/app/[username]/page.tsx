@@ -49,13 +49,14 @@ export default async function Profile({ params: { username } }: { params: { user
             <ul className="flex flex-col gap-2 w-full items-center">
                 {Object.keys(socialLinks).map((key) => {
                     const url = socialLinks[key].url;
+                    const label = socialLinks[key].label;
 
                     if (url === undefined) return null;
 
                     return (
                         <li key={key} className="w-full">
                             <Button asChild className="w-full">
-                                <Link href={url}>{key}</Link>
+                                <Link href={url}>{label}</Link>
                             </Button>
                         </li>
                     )

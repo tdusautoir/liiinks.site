@@ -99,7 +99,7 @@ export default function Profile({ user }: { user: UsersType[0] }) {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 flex-col max-w-xl p-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 flex-col max-w-xl p-4 pt-0">
                 <h2>Profil</h2>
                 <FormField
                     control={form.control}

@@ -2,16 +2,6 @@
     padding-top: 56px;
     height: 100vh;
 
-    .head {
-        padding: 1rem;
-        padding-top: 0;
-
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-    }
-
     .content {
         display: grid;
         grid-template: "aside main" 1fr / minmax(256px, 1fr) 9fr;
@@ -22,6 +12,7 @@
             flex-direction: column;
             gap: 0.25rem;
             padding: 1rem;
+            padding-top: 0;
 
             button {
                 justify-content: flex-start;

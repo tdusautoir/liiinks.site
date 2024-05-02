@@ -1,5 +1,5 @@
 import { Form, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { } from "@/components/ui/input"
+import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -14,6 +14,7 @@ import {
 
 const formSchema = z.object({
     font: z.string(),
+    backgroundColor: z.string(),
 })
 
 export default function MySpace() {
@@ -21,6 +22,7 @@ export default function MySpace() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             font: "inter",
+            backgroundColor: "#ffffff",
         },
     });
 
@@ -30,7 +32,7 @@ export default function MySpace() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 flex-col max-w-xl p-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 flex-col max-w-xl p-4 pt-0">
                 <h2>Mon espace</h2>
                 <FormField
                     control={form.control}
@@ -50,6 +52,24 @@ export default function MySpace() {
                             </Select>
                             <FormDescription>
                                 Définissez la police que vous souhaitez utiliser sur votre espace liiinks.
+                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="backgroundColor"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Couleur de fond</FormLabel>
+                            <Input
+                                className="w-[40px] p-1.5"
+                                type="color"
+                                {...field}
+                            />
+                            <FormDescription>
+                                Définissez la couleur de fond de votre espace liiinks.
                             </FormDescription>
                             <FormMessage />
                         </FormItem>
