@@ -10,6 +10,7 @@ import { UsersType } from "@/lib/db/userHelper"
 import { useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { toastErrorProperties, toastSuccessProperties } from "@/components/ui/toast"
+import { useSession } from "next-auth/react"
 
 const formSchema = z.object({
     firstname: z.string().min(1, {
@@ -40,6 +41,7 @@ const formSchema = z.object({
 
 export default function Profile({ user }: { user: UsersType[0] }) {
     const [loading, setLoading] = useState(false);
+    const { update } = useSession();
     const { toast } = useToast();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -74,6 +76,11 @@ export default function Profile({ user }: { user: UsersType[0] }) {
                     toast({
                         title: "Votre profil a été mis à jour avec succès. Votre liiink va être mis à jour dans quelques instants.",
                         ...toastSuccessProperties
+                    })
+
+                    update({
+                        ...result.user,
+                        username: values.username
                     })
                 } else {
                     toast({
