@@ -1,6 +1,6 @@
 import Link from "next/link";
 import style from "./profile.module.scss";
-import { Avatar, AvatarFallback, AvatarImage, } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getUserWithLinkByUsername } from "@/lib/db/userHelper";
 import { getInitials } from "@/lib/utils";
@@ -40,7 +40,7 @@ export default async function Profile({ params: { username } }: { params: { user
     return (
         <div className={style.container}>
             <Avatar>
-                <AvatarFallback>{getInitials(user.firstname, user.username)}</AvatarFallback>
+                <AvatarFallback>{getInitials(user.firstname, user.lastname)}</AvatarFallback>
             </Avatar>
             <h1>{username}</h1>
             <ul className="flex flex-col gap-2 w-full items-center">
