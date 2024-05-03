@@ -201,7 +201,7 @@ export default function Profile({ user }: { user: UsersType[0] }) {
                     {loading ? <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Chargement...
-                    </> : "Emregistrer les modifications"}
+                    </> : "Enregistrer les modifications"}
                 </Button>
                 <AlertDialog>
                     <AlertDialogTrigger asChild>

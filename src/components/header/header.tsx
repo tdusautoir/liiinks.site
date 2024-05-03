@@ -1,15 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, LogOut, Settings, User } from "lucide-react";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
+import { ExternalLink, LogOut, PenBox, Settings, User } from "lucide-react";
 import style from "./header.module.scss"
 import Logo from "@/components/logo";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { signOut, useSession } from "next-auth/react";
 import { UsersType } from "@/lib/db/userHelper";
-import { getInitials } from "@/lib/utils";
 import { Button } from "../ui/button";
 
 export default function Header({ asMenu = true }: { asMenu?: boolean }) {
@@ -19,23 +16,13 @@ export default function Header({ asMenu = true }: { asMenu?: boolean }) {
         <header className={style.container}>
             <Logo />
             {asMenu && (
-                <NavigationMenu>
-                    <NavigationMenuList>
-                        {status === "unauthenticated" ? (
-                            <NavigationMenuItem>
-                                <Link href="/sign-in" legacyBehavior passHref>
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        <User className="mr-2 w-4 h-4" />Se connecter
-                                    </NavigationMenuLink>
-                                </Link>
-                            </NavigationMenuItem>
-                        ) : (
-                            <NavigationMenuItem>
-                                <MyProfile />
-                            </NavigationMenuItem>
-                        )}
-                    </NavigationMenuList>
-                </NavigationMenu>
+                status === "unauthenticated" ? (
+                    <Button size="sm" asChild>
+                        <Link href="/sign-in">Se connecter</Link>
+                    </Button>
+                ) : (
+                    <MyProfile />
+                )
             )}
         </header >
     )
@@ -51,22 +38,22 @@ function MyProfile() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button size="sm"><User className="w-4 h-4 mr-2" />{user.firstname}</Button>
+                <Button size="sm"><User className="w-4 h-4 mr-2" />Mon profil</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">
                 <DropdownMenuLabel>{user.firstname + " " + user.lastname}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
+                    <Link href="/account">
+                        <DropdownMenuItem className="cursor-pointer">
+                            <PenBox className="mr-2 h-4 w-4" />
+                            <span>Personnaliser</span>
+                        </DropdownMenuItem>
+                    </Link>
                     <Link href={"/" + user.username} target="_blank">
                         <DropdownMenuItem className="cursor-pointer">
                             <ExternalLink className="mr-2 h-4 w-4" />
-                            <span>Ma page liiinks</span>
-                        </DropdownMenuItem>
-                    </Link>
-                    <Link href="/account">
-                        <DropdownMenuItem className="cursor-pointer">
-                            <Settings className="mr-2 h-4 w-4" />
-                            <span>Paramètres</span>
+                            <span>Voir ma page</span>
                         </DropdownMenuItem>
                     </Link>
                 </DropdownMenuGroup>

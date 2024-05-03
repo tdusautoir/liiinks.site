@@ -17,12 +17,11 @@
 
     .hero {
         text-align: center;
+        padding: 1.5rem;
 
         &>h1 {
             font-size: max(48px, min(5vw, 76px));
             font-weight: 700;
-            padding: 1.5rem;
-            padding-bottom: 0rem;
             line-height: 1.2;
             text-wrap: balance;
         }
@@ -31,8 +30,7 @@
             font-size: max(16px, min(2vw, 20px));
             margin: 0 auto;
             max-width: 800px;
-            padding: 1rem 1.5rem;
-            padding-top: 0;
+            padding-bottom: 1rem;
         }
     }
 
