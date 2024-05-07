@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Création d'une plateforme de gestion de liens personnels
 
-## Getting Started
+## **Description du projet :**
 
-First, run the development server:
+Liiinks permet aux utilisateurs de créer un profil personnalisable avec des liens vers des réseaux sociaux et d'autres sites importants.
+Les utilisateurs peuvent s'inscrire, personnaliser leur page, et gérer leurs liens de manière intuitive.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## **Fonctionnalités disponibles :**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. **Inscription et connexion :**
+    - Inscription avec réservation de nom d'utilisateur et adresse e-mail.
+    - Système de connexion via des magic links.
+2. **Gestion de profil :**
+    - URL personnalisée basée sur le nom d'utilisateur (www.liiinks.achille-david.com/username).
+    - Personnalisation de la page avec téléchargement d'un avatar et rédaction d'une courte biographie.
+    - Fonctionnalité complète du CRUD pour les utilisateurs.
+3. **Gestion des liens :**
+    - Ajout et gestion de 5 liens vers des réseaux sociaux (Twitter, Facebook, LinkedIn, Behance, Instagram).
+    - Ajout et gestion de 5 autres liens (par exemple: site vitrine, site Ecommerce, portfolio).
+    - Les champs non utilisés n'apparaîssent pas sur la page liiinks.
+4. **Stockage des données :**
+    - Utilisation d'Airtable pour stocker les informations des utilisateurs, y compris les détails du profil et les liens.
+5. **Interface et design :**
+    - Interface responsive.
+6. **Gestion technique :**
+7. **Accessibilité :**
+    - Tous les éléments interactifs sont accessibles via le clavier et lisibles par les lecteurs d'écran.
+    - Utilisation de couleurs avec un contraste suffisant pour les utilisateurs ayant une déficience visuelle.
+    - Testez l'accessibilité avec des outils tels que l'audit d'accessibilité dans Google Chrome ou aXe.
+8. **Analytique :**
+    - Intégration d'une solution d'analytique pour suivre l'activité sur la plateforme, notamment le nombre de visites par page et les clics sur les liens. Ces données seront accessibles uniquement par l'administrateur.
