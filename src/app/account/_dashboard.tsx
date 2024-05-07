@@ -3,7 +3,6 @@
 import Header from "@/components/header/header";
 import React, { Fragment, ReactNode, useState } from "react";
 import style from "./account.module.scss";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import Profile from "./_profile";
 import Links from "./_links";
@@ -38,7 +37,7 @@ export default function Dashboard({ user }: {
     const steps = {
         "profile": <Profile user={user} />,
         "links": <Links link={user.link} />,
-        "my-space": <MySpace />,
+        "my-space": <MySpace link={user.link} />,
     };
 
     const buttonLabels: ButtonLabels = {

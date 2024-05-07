@@ -4,25 +4,21 @@ import { NextRequest, NextResponse } from "next/server";
 
 type FormData = {
     id: string,
-    twitter: string | undefined,
-    facebook: string | undefined,
-    linkedin: string | undefined,
-    behance: string | undefined,
-    instagram: string | undefined,
+    fontFamily: string | undefined,
+    backgroundPreset: string | undefined,
 }
 
 export async function PUT(req: NextRequest, res: NextResponse) {
     try {
         const body = await req.json();
 
-        const { id, facebook, linkedin, behance, twitter, instagram } = body as FormData;
+        const { id, fontFamily, backgroundPreset } = body as FormData;
+
+        console.log(body);
 
         const link = await updateLink(id, {
-            facebook: facebook ? (isEmpty(facebook) ? undefined : facebook) : undefined,
-            linkedin: linkedin ? (isEmpty(linkedin) ? undefined : linkedin) : undefined,
-            behance: behance ? (isEmpty(behance) ? undefined : behance) : undefined,
-            twitter: twitter ? (isEmpty(twitter) ? undefined : twitter) : undefined,
-            instagram: instagram ? (isEmpty(instagram) ? undefined : instagram) : undefined,
+            fontFamily: fontFamily ? (isEmpty(fontFamily) ? undefined : fontFamily) : undefined,
+            backgroundPreset: backgroundPreset ? (isEmpty(backgroundPreset) ? undefined : backgroundPreset) : undefined,
         });
 
         return new NextResponse(JSON.stringify(

@@ -9,6 +9,8 @@ export type LinksType = Array<{
     twitter?: string,
     behance?: string,
     personalizedLinks?: string,
+    fontFamily?: string,
+    backgroundPreset?: string,
     updatedAt: string,
     createdAt: string,
 }>
@@ -43,6 +45,8 @@ export const getLinkByUsername = async (username: string): Promise<LinksType[0] 
                 twitter: record.get("twitter") as string | undefined,
                 behance: record.get("behance") as string | undefined,
                 personalizedLinks: record.get("personalizedLinks") as string | undefined,
+                fontFamily: record.get("fontFamily") as string | undefined,
+                backgroundPreset: record.get("backgroundPreset") as string | undefined,
                 updatedAt: record.get("updatedAt") as string,
                 createdAt: record.get("createdAt") as string,
             });

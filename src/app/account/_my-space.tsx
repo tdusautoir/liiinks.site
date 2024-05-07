@@ -11,23 +11,72 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { useState } from "react"
+import { LinksType } from "@/lib/db/linksHelper"
+import { useToast } from "@/components/ui/use-toast"
+import { toastErrorProperties, toastSuccessProperties } from "@/components/ui/toast"
+import { Loader2 } from "lucide-react"
 
 const formSchema = z.object({
-    font: z.string(),
+    fontFamily: z.string(),
     backgroundColor: z.string(),
 })
 
-export default function MySpace() {
+export default function MySpace({ link }: {
+    link: Omit<LinksType[0], 'personalizedLinks'> & {
+        personalizedLinks: Array<{ url: string, label: string }>
+    }
+}) {
+    const [loading, setLoading] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            font: "inter",
+            fontFamily: "inter",
             backgroundColor: "#ffffff",
         },
     });
+    const { toast } = useToast();
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        setLoading(true);
+
+        try {
+            const res = await fetch("/api/account/space", {
+                method: "PUT",
+                body: JSON.stringify({
+                    ...values,
+                    id: link.id
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+
+            setLoading(false);
+
+            const result = await res.json();
+
+            console.log(result);
+
+            if (res.ok) {
+                toast({
+                    title: "Votre liiink a été mis à jour avec succès.",
+                    ...toastSuccessProperties
+                })
+            } else {
+                toast({
+                    title: result.error ? result.message : "Une erreur est survenue",
+                    ...toastErrorProperties
+                })
+            }
+        } catch (error) {
+            setLoading(false);
+
+            toast({
+                title: "Une erreur est survenue",
+                ...toastErrorProperties
+            })
+        };
     }
 
     return (
@@ -36,7 +85,7 @@ export default function MySpace() {
                 <h2>Mon espace</h2>
                 <FormField
                     control={form.control}
-                    name="font"
+                    name="fontFamily"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Police d&apos;écriture</FormLabel>
@@ -45,9 +94,15 @@ export default function MySpace() {
                                     <SelectValue placeholder="Choisir une police" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="inter">Inter</SelectItem>
-                                    <SelectItem value="Roboto">Roboto</SelectItem>
-                                    <SelectItem value="Helvetica">Helvetica</SelectItem>
+                                    <SelectItem value="inter" style={{
+                                        fontFamily: "var(--font-sans)"
+                                    }}>Inter</SelectItem>
+                                    <SelectItem value="roboto" style={{
+                                        fontFamily: "var(--font-roboto)"
+                                    }}>Roboto</SelectItem>
+                                    <SelectItem value="pacifico" style={{
+                                        fontFamily: "var(--font-pacifico)"
+                                    }}>Pacifico</SelectItem>
                                 </SelectContent>
                             </Select>
                             <FormDescription>
@@ -75,8 +130,13 @@ export default function MySpace() {
                         </FormItem>
                     )}
                 />
-                <Button className="w-fit">Enregistrer les modifications</Button>
+                <Button disabled={loading} className="w-fit" type="submit">
+                    {loading ? <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Chargement...
+                    </> : "Emregistrer les modifications"}
+                </Button>
             </form>
-        </Form>
+        </Form >
     )
 }

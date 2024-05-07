@@ -3,10 +3,11 @@ import style from "./profile.module.scss";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getUserWithLinkByUsername } from "@/lib/db/userHelper";
-import { getInitials } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import CustomLink from "./link";
 import { Metadata } from "next";
+import { inter, pacifico, roboto } from "../layout";
 
 export const generateMetadata = async (
     props: { params: ParamsType }
@@ -20,6 +21,12 @@ export const generateMetadata = async (
 };
 
 type ParamsType = { username: string }
+
+const fonts: Record<string, string> = {
+    inter: inter.className,
+    roboto: roboto.className,
+    pacifico: pacifico.className
+};
 
 export default async function Profile({ params: { username } }: { params: { username: string } }) {
     const user = await getUserWithLinkByUsername(username);
@@ -52,8 +59,10 @@ export default async function Profile({ params: { username } }: { params: { user
         },
     }
 
+    const font = user.link.fontFamily ? fonts[user.link.fontFamily] : undefined;
+
     return (
-        <div className={style.container}>
+        <div className={cn(style.container, font)}>
             <Avatar>
                 <AvatarFallback>{getInitials(user.firstname, user.lastname)}</AvatarFallback>
             </Avatar>
