@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 type FormData = {
     id: string,
-    fontFamily: string | undefined,
+    font: string | undefined,
     backgroundPreset: string | undefined,
 }
 
@@ -12,12 +12,10 @@ export async function PUT(req: NextRequest, res: NextResponse) {
     try {
         const body = await req.json();
 
-        const { id, fontFamily, backgroundPreset } = body as FormData;
-
-        console.log(body);
+        const { id, font, backgroundPreset } = body as FormData;
 
         const link = await updateLink(id, {
-            fontFamily: fontFamily ? (isEmpty(fontFamily) ? undefined : fontFamily) : undefined,
+            font: font ? (isEmpty(font) ? undefined : font) : undefined,
             backgroundPreset: backgroundPreset ? (isEmpty(backgroundPreset) ? undefined : backgroundPreset) : undefined,
         });
 

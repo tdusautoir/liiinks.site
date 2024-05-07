@@ -59,11 +59,11 @@ export default async function Profile({ params: { username } }: { params: Params
         },
     }
 
-    const font = user.link.fontFamily ? fonts[user.link.fontFamily] : undefined;
+    const font = user.link.font ? fonts[user.link.font] : undefined;
 
     return (
-        <div className={cn(style.container, font)}>
-            <div className="mt-auto mx-auto max-w-sm">
+        <div className={style.container}>
+            <div className={cn("mt-auto mx-auto max-w-sm", font)}>
                 <Avatar>
                     <AvatarFallback>{getInitials(user.firstname, user.lastname)}</AvatarFallback>
                 </Avatar>

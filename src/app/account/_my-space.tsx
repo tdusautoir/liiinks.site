@@ -19,37 +19,63 @@ import style from "./account.module.scss"
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 
-const themeLabels = {
+const themes = {
     default: {
         label: "Défaut",
         buttonProps: {
             variant: undefined,
         },
+        value: "default"
     },
     orange: {
         label: "Orange",
         buttonProps: {
             variant: "secondary",
         },
+        value: "orange"
     },
     green: {
         label: "Vert",
         buttonProps: {
             variant: "secondary",
         },
+        value: "green"
     },
     blue: {
         label: "Bleu",
         buttonProps: {
             variant: "secondary",
         },
+        value: "blue"
     },
 } as {
     [key: string]: {
         label: string,
         buttonProps?: React.ComponentProps<typeof Button>,
+        value: string
     }
 }
+
+const fonts = [{
+    className: "var(--font-sans)",
+    label: "Inter",
+    value: "inter"
+},
+{
+    className: "var(--font-roboto)",
+    label: "Roboto",
+    value: "roboto"
+},
+{
+    className: "var(--font-pacifico)",
+    label: "Pacifico",
+    value: "pacifico"
+},
+] as Array<{
+    label: string,
+    className: string,
+    value: string
+}>
 
 const formSchema = z.object({
     font: z.string(),
@@ -62,10 +88,11 @@ export default function MySpace({ link }: {
     }
 }) {
     const [loading, setLoading] = useState(false);
+    const [selectedFont, setSelectedFont] = useState(link.font || "inter");
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            font: "inter",
+            font: link.font || "inter",
             theme: "default",
         },
     });
@@ -126,20 +153,22 @@ export default function MySpace({ link }: {
                     render={({ field }) => (
                         <FormItem className="max-w-xl">
                             <FormLabel>Police d&apos;écriture</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={(value) => {
+                                setSelectedFont(value);
+                                field.onChange;
+                            }} defaultValue={field.value}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Choisir une police" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="inter" style={{
-                                        fontFamily: "var(--font-sans)"
-                                    }}>Inter</SelectItem>
-                                    <SelectItem value="roboto" style={{
-                                        fontFamily: "var(--font-roboto)"
-                                    }}>Roboto</SelectItem>
-                                    <SelectItem value="pacifico" style={{
-                                        fontFamily: "var(--font-pacifico)"
-                                    }}>Pacifico</SelectItem>
+                                    {fonts.map((font) => (
+                                        <SelectItem
+                                            key={font.value}
+                                            value={font.value}
+                                            style={{ fontFamily: font.className }}>
+                                            {font.label}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                             <FormMessage />
@@ -154,12 +183,13 @@ export default function MySpace({ link }: {
                             <FormLabel>Thème</FormLabel>
                             <div className={style.themes}>
                                 {
-                                    Object.keys(themeLabels).map((theme) => (
+                                    Object.keys(themes).map((theme) => (
                                         <ThemeCard
                                             key={theme}
                                             theme={theme}
                                             isSelected={field.value === theme}
-                                            buttonProps={themeLabels[theme].buttonProps}
+                                            buttonProps={themes[theme].buttonProps}
+                                            selectedFont={selectedFont}
                                             selectTheme={() => {
                                                 form.setValue("theme", theme);
                                             }}
@@ -175,23 +205,39 @@ export default function MySpace({ link }: {
                     {loading ? <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Chargement...
-                    </> : "Emregistrer les modifications"}
+                    </> : "Enregistrer les modifications"}
                 </Button>
             </form>
         </Form >
     )
 }
 
-function ThemeCard({ theme, isSelected, selectTheme, buttonProps }: { theme: string, isSelected: boolean, selectTheme: () => void, buttonProps?: React.ComponentProps<typeof Button> }) {
+function ThemeCard({
+    theme,
+    isSelected,
+    selectTheme,
+    selectedFont,
+    buttonProps
+}: {
+    theme: string,
+    isSelected: boolean,
+    selectTheme: () => void,
+    selectedFont: string,
+    buttonProps?: React.ComponentProps<typeof Button>
+}) {
+    const font = fonts.find((f) => f.value === selectedFont);
+
     return (
         <figure className={cn(style.theme, isSelected && style.selected, style[theme])} onClick={selectTheme}>
             <div className={style.card}>
-                <Button {...buttonProps}>
+                <Button type="button" {...buttonProps} style={{
+                    fontFamily: font?.className
+                }}>
                     Bouton illustratif
                 </Button>
             </div>
             <Separator />
-            <figcaption>{themeLabels[theme].label}</figcaption>
+            <figcaption>{themes[theme].label}</figcaption>
         </figure>
     )
 }
