@@ -17,10 +17,8 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { LinksType } from "@/lib/db/linksHelper"
-import { DialogTrigger } from "@radix-ui/react-dialog"
 import { toastErrorProperties, toastSuccessProperties } from "@/components/ui/toast"
 import { toast, useToast } from "@/components/ui/use-toast"
 import style from "./account.module.scss"
@@ -148,7 +146,10 @@ function Socials({ link }: {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full max-w-xl p-4 pt-0">
-                <h2>Réseaux sociaux</h2>
+                <div>
+                    <h2>Réseaux sociaux</h2>
+                    <p className="text-sm text-muted-foreground">Ajoutez vos liens vers vos réseaux sociaux pour que les autres utilisateurs puissent vous suivre.</p>
+                </div>
                 <FormField
                     control={form.control}
                     name="twitter"
@@ -218,7 +219,7 @@ function Socials({ link }: {
                     {loading ? <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Chargement...
-                    </> : "Emregistrer les modifications"}
+                    </> : "Enregistrer les modifications"}
                 </Button>
             </form>
         </Form>
@@ -242,8 +243,10 @@ function CustomLinks({
 
     return (
         <div className="flex flex-col gap-4 w-full max-w-xl p-4 pt-0">
-            <h2>Liens personnalisés</h2>
-            <p className="text-sm text-muted-foreground">Vous pouvez ajouter jusqu&apos;à 5 liens vers vos projets, site web, portfolio, etc.</p>
+            <div>
+                <h2>Liens personnalisés</h2>
+                <p className="text-sm text-muted-foreground">Vous pouvez ajouter jusqu&apos;à 5 liens vers vos projets, site web, portfolio, etc.</p>
+            </div>
             {customLinks.map((link, key) => (
                 <CustomLink key={key} link={link} linkId={linkId} personalizedLinkKey={key} updatePersonalizedLink={updatePersonalizedLink} removePersonalizedLink={removePersonalizedLink} />
             ))}

@@ -130,16 +130,20 @@ export {
 
 export const toastErrorProperties = {
   style: {
-    backgroundColor: "#EF4444",
+    backgroundColor: "hsl(0 72.2% 50.6%)",
     color: "#FFFFFF",
+    fill: "#FFFFFF",
+    border: "none"
   },
   duration: 4000
 }
 
 export const toastSuccessProperties = {
   style: {
-    backgroundColor: "#34D399",
+    backgroundColor: "hsl(142.1 76.2% 36.3%)",
     color: "#FFFFFF",
+    fill: "#FFFFFF",
+    border: "none",
   },
   duration: 4000
 }
