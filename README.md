@@ -22,10 +22,9 @@ Les utilisateurs peuvent s'inscrire, personnaliser leur page, et gérer leurs li
     - Utilisation d'Airtable pour stocker les informations des utilisateurs, y compris les détails du profil et les liens.
 5. **Interface et design :**
     - Interface responsive.
-6. **Gestion technique :**
-7. **Accessibilité :**
+6. **Accessibilité :**
     - Tous les éléments interactifs sont accessibles via le clavier et lisibles par les lecteurs d'écran.
     - Utilisation de couleurs avec un contraste suffisant pour les utilisateurs ayant une déficience visuelle.
     - Testez l'accessibilité avec des outils tels que l'audit d'accessibilité dans Google Chrome ou aXe.
-8. **Analytique :**
+7. **Analytique :**
     - Intégration d'une solution d'analytique pour suivre l'activité sur la plateforme, notamment le nombre de visites par page et les clics sur les liens. Ces données seront accessibles uniquement par l'administrateur.
