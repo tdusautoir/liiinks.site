@@ -1,47 +1,53 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, LogOut, PenBox, Settings, User } from "lucide-react";
+import { Copy, Eye, LogOut, PenBox, User } from "lucide-react";
 import style from "./header.module.scss"
 import Logo from "@/components/logo";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { signOut, useSession } from "next-auth/react";
 import { UsersType } from "@/lib/db/userHelper";
 import { Button } from "../ui/button";
+import { useToast } from "../ui/use-toast";
+import { toastSuccessProperties } from "../ui/toast";
+import React from "react";
 
-export default function Header({ asMenu = true }: { asMenu?: boolean }) {
-    const { status } = useSession();
-
+export default function Header({ menu }: { menu?: React.ReactNode }) {
     return (
         <header className={style.container}>
             <Logo />
-            {asMenu && (
-                status === "unauthenticated" ? (
-                    <Button size="sm" asChild>
-                        <Link href="/sign-in">Se connecter</Link>
-                    </Button>
-                ) : (
-                    <MyProfile />
-                )
-            )}
-        </header >
+            {menu &&
+                <ul className="inline-flex space-x-2">
+                    {menu}
+                </ul>
+            }
+        </header>
     )
 }
 
 function MyProfile() {
     const { data } = useSession();
+    const { toast } = useToast();
 
     const user = data && (data.user as UsersType[0]);
 
     if (!user) return null;
 
+    const copy = () => {
+        navigator.clipboard.writeText(window.location.origin + "/" + user.username);
+        toast({
+            description: "Lien copié dans le presse-papier.",
+            ...toastSuccessProperties
+        })
+    }
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button size="sm"><User className="w-4 h-4 mr-2" />Mon profil</Button>
+                <Button size="sm"><User className="w-4 h-4 mr-2" />{user.firstname}</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">
-                <DropdownMenuLabel>{user.firstname + " " + user.lastname}</DropdownMenuLabel>
+                <DropdownMenuLabel>Ma page liiinks</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                     <Link href="/account">
@@ -50,12 +56,16 @@ function MyProfile() {
                             <span>Personnaliser</span>
                         </DropdownMenuItem>
                     </Link>
-                    <Link href={"/" + user.username} target="_blank">
+                    <Link href={"/" + user.username}>
                         <DropdownMenuItem className="cursor-pointer">
-                            <ExternalLink className="mr-2 h-4 w-4" />
-                            <span>Voir ma page</span>
+                            <Eye className="mr-2 h-4 w-4" />
+                            <span>Afficher</span>
                         </DropdownMenuItem>
                     </Link>
+                    <DropdownMenuItem className="cursor-pointer" onClick={copy}>
+                        <Copy className="mr-2 h-4 w-4" />
+                        <span>Partager</span>
+                    </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>

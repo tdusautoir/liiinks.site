@@ -4,11 +4,12 @@ import { Fragment } from "react";
 import style from "./home.module.scss"
 import Link from "next/link";
 import { ArrowRight, CirclePlus, Link as LinkIcon, SquarePen } from "lucide-react";
+import HomeMenu from "@/components/menu/home";
 
 export default function Home() {
   return (
     <Fragment>
-      <Header />
+      <Header menu={<HomeMenu />} />
       <main className={style.container}>
         <div className={style.hero}>
           <h1>Tout sur vous en un seul clic.</h1>

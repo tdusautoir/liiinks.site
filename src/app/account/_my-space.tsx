@@ -1,5 +1,4 @@
-import { Form, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -11,10 +10,45 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import style from "./account.module.scss"
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+
+const themeLabels = {
+    default: {
+        label: "Défaut",
+        buttonProps: {
+            variant: undefined,
+        },
+    },
+    orange: {
+        label: "Orange",
+        buttonProps: {
+            variant: "secondary",
+        },
+    },
+    green: {
+        label: "Vert",
+        buttonProps: {
+            variant: "secondary",
+        },
+    },
+    blue: {
+        label: "Bleu",
+        buttonProps: {
+            variant: "secondary",
+        },
+    },
+} as {
+    [key: string]: {
+        label: string,
+        buttonProps?: React.ComponentProps<typeof Button>,
+    }
+}
 
 const formSchema = z.object({
     font: z.string(),
-    backgroundColor: z.string(),
+    theme: z.string().optional(),
 })
 
 export default function MySpace() {
@@ -22,7 +56,7 @@ export default function MySpace() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             font: "inter",
-            backgroundColor: "#ffffff",
+            theme: "default",
         },
     });
 
@@ -32,13 +66,16 @@ export default function MySpace() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 flex-col max-w-xl p-4 pt-0">
-                <h2>Mon espace</h2>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 flex-col p-4 pt-0">
+                <div className="max-w-xl">
+                    <h2>Mon espace</h2>
+                    <p className="text-sm text-muted-foreground">Personnalisez votre espace en choisissant votre police d&apos;écriture et votre thème.</p>
+                </div>
                 <FormField
                     control={form.control}
                     name="font"
                     render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="max-w-xl">
                             <FormLabel>Police d&apos;écriture</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <SelectTrigger>
@@ -50,27 +87,31 @@ export default function MySpace() {
                                     <SelectItem value="Helvetica">Helvetica</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <FormDescription>
-                                Définissez la police que vous souhaitez utiliser sur votre espace liiinks.
-                            </FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
                 <FormField
                     control={form.control}
-                    name="backgroundColor"
+                    name="theme"
                     render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Couleur de fond</FormLabel>
-                            <Input
-                                className="w-[40px] p-1.5"
-                                type="color"
-                                {...field}
-                            />
-                            <FormDescription>
-                                Définissez la couleur de fond de votre espace liiinks.
-                            </FormDescription>
+                        <FormItem className="max-w-4xl">
+                            <FormLabel>Thème</FormLabel>
+                            <div className={style.themes}>
+                                {
+                                    Object.keys(themeLabels).map((theme) => (
+                                        <ThemeCard
+                                            key={theme}
+                                            theme={theme}
+                                            isSelected={field.value === theme}
+                                            buttonProps={themeLabels[theme].buttonProps}
+                                            selectTheme={() => {
+                                                form.setValue("theme", theme);
+                                            }}
+                                        />
+                                    ))
+                                }
+                            </div>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -78,5 +119,19 @@ export default function MySpace() {
                 <Button className="w-fit">Enregistrer les modifications</Button>
             </form>
         </Form>
+    )
+}
+
+function ThemeCard({ theme, isSelected, selectTheme, buttonProps }: { theme: string, isSelected: boolean, selectTheme: () => void, buttonProps?: React.ComponentProps<typeof Button> }) {
+    return (
+        <figure className={cn(style.theme, isSelected && style.selected, style[theme])} onClick={selectTheme}>
+            <div className={style.card}>
+                <Button {...buttonProps}>
+                    Bouton illustratif
+                </Button>
+            </div>
+            <Separator />
+            <figcaption>{themeLabels[theme].label}</figcaption>
+        </figure>
     )
 }

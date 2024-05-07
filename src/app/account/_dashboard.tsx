@@ -3,13 +3,13 @@
 import Header from "@/components/header/header";
 import React, { Fragment, ReactNode, useState } from "react";
 import style from "./account.module.scss";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import Profile from "./_profile";
-import Links from "./_links";
+import Profile from "./_my-informations";
+import Links from "./_my-links";
 import MySpace from "./_my-space";
 import { UsersType } from "@/lib/db/userHelper";
 import { LinksType } from "@/lib/db/linksHelper";
+import AccountMenu from "@/components/menu/account";
 
 type Steps = {
     [key: string]: ReactNode;
@@ -42,14 +42,14 @@ export default function Dashboard({ user }: {
     };
 
     const buttonLabels: ButtonLabels = {
-        "profile": "Profil",
+        "profile": "Mes informations",
         "links": "Mes liens",
         "my-space": "Mon espace",
     };
 
     return (
         <Fragment>
-            <Header />
+            <Header menu={<AccountMenu />} />
             <main className={style.container}>
                 <div className={style.content}>
                     <div className={style.menu}>

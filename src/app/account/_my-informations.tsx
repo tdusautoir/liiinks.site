@@ -118,7 +118,10 @@ export default function Profile({ user }: { user: UsersType[0] }) {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 flex-col max-w-xl p-4 pt-0">
-                <h2>Profil</h2>
+                <div>
+                    <h2>Mes informations</h2>
+                    <p className="text-sm text-muted-foreground">Modifiez vos informations personnelles.</p>
+                </div>
                 <FormField
                     control={form.control}
                     name="email"

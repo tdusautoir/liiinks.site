@@ -7,6 +7,7 @@ import { getInitials } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import CustomLink from "./link";
 import { Metadata } from "next";
+import { CustomizeButton } from "./customizeButton";
 
 export const generateMetadata = async (
     props: { params: ParamsType }
@@ -21,9 +22,8 @@ export const generateMetadata = async (
 
 type ParamsType = { username: string }
 
-export default async function Profile({ params: { username } }: { params: { username: string } }) {
+export default async function Profile({ params: { username } }: { params: ParamsType }) {
     const user = await getUserWithLinkByUsername(username);
-
     if (!user) notFound();
 
     const socialLinks: Record<string, {
@@ -54,39 +54,42 @@ export default async function Profile({ params: { username } }: { params: { user
 
     return (
         <div className={style.container}>
-            <Avatar>
-                <AvatarFallback>{getInitials(user.firstname, user.lastname)}</AvatarFallback>
-            </Avatar>
-            <div>
-                <h1>{user.firstname} {user.lastname}</h1>
-                {user.bio && <p className="text-sm text-neutral-950">{user.bio}</p>}
+            <div className="mt-auto mx-auto max-w-sm">
+                <Avatar>
+                    <AvatarFallback>{getInitials(user.firstname, user.lastname)}</AvatarFallback>
+                </Avatar>
+                <div>
+                    <h1>{user.firstname} {user.lastname}</h1>
+                    {user.bio && <p className="text-sm text-neutral-950">{user.bio}</p>}
+                </div>
+                <ul className="flex flex-col gap-4 w-full items-center">
+                    {Object.keys(socialLinks).map((key) => {
+                        const url = socialLinks[key].url;
+                        const label = socialLinks[key].label;
+
+                        if (url === undefined) return null;
+
+                        return (
+                            <li key={key} className="w-full">
+                                <CustomLink username={username} url={url} label={label} />
+                            </li>
+                        )
+                    })}
+                    {user.link.personalizedLinks.map((link, index) => {
+                        return (
+                            <li key={index} className="w-full">
+                                <CustomLink username={username} url={link.url} label={link.label} />
+                            </li>
+                        )
+                    })}
+                    <li>
+                        <Button className="w-fit" variant="link" asChild>
+                            <Link href="/">@liiinks</Link>
+                        </Button>
+                    </li>
+                </ul>
             </div>
-            <ul className="flex flex-col gap-4 w-full items-center">
-                {Object.keys(socialLinks).map((key) => {
-                    const url = socialLinks[key].url;
-                    const label = socialLinks[key].label;
-
-                    if (url === undefined) return null;
-
-                    return (
-                        <li key={key} className="w-full">
-                            <CustomLink username={username} url={url} label={label} />
-                        </li>
-                    )
-                })}
-                {user.link.personalizedLinks.map((link, index) => {
-                    return (
-                        <li key={index} className="w-full">
-                            <CustomLink username={username} url={link.url} label={link.label} />
-                        </li>
-                    )
-                })}
-                <li>
-                    <Button className="w-fit" variant="link" asChild>
-                        <Link href="/">@liiinks</Link>
-                    </Button>
-                </li>
-            </ul>
+            <CustomizeButton username={user.username} />
         </div>
     )
 }
