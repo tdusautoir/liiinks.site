@@ -5,18 +5,18 @@ import { NextRequest, NextResponse } from "next/server";
 type FormData = {
     id: string,
     font: string | undefined,
-    backgroundPreset: string | undefined,
+    theme: string | undefined,
 }
 
 export async function PUT(req: NextRequest, res: NextResponse) {
     try {
         const body = await req.json();
 
-        const { id, font, backgroundPreset } = body as FormData;
+        const { id, font, theme } = body as FormData;
 
         const link = await updateLink(id, {
             font: font ? (isEmpty(font) ? undefined : font) : undefined,
-            backgroundPreset: backgroundPreset ? (isEmpty(backgroundPreset) ? undefined : backgroundPreset) : undefined,
+            backgroundPreset: theme ? (isEmpty(theme) ? undefined : theme) : undefined,
         });
 
         return new NextResponse(JSON.stringify(

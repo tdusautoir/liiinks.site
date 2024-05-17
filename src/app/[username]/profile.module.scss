@@ -20,4 +20,16 @@
         font-size: 1.5rem;
         font-weight: 700;
     }
+
+    &.variant-blue {
+        background-image: linear-gradient(135deg, #9bafd9 -20%, #103783 90%);
+    }
+
+    &.variant-orange {
+        background-image: linear-gradient(135deg, #f9b248 -20%, #f12711 90%);
+    }
+
+    &.variant-green {
+        background-image: linear-gradient(135deg, #a1d99b -20%, #0f783c 90%);
+    }
 }

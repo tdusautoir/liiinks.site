@@ -93,7 +93,7 @@ export default function MySpace({ link }: {
         resolver: zodResolver(formSchema),
         defaultValues: {
             font: link.font || "inter",
-            theme: "default",
+            theme: link.backgroundPreset || "default",
         },
     });
     const { toast } = useToast();
